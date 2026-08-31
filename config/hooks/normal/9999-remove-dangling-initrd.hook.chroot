@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+# live-build can leave these compatibility symlinks dangling after
+# initramfs generation. Remove only the broken links before lb_chroot_hacks.
+for link in /boot/initrd.img /boot/initrd.img.old; do
+    if [ -L "$link" ] && [ ! -e "$link" ]; then
+        echo "Removing dangling initramfs symlink: $link"
+        rm -f "$link"
+    fi
+done
