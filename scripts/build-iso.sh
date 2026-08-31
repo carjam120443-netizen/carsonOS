@@ -15,7 +15,7 @@ mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 
 sudo apt-get update
-sudo apt-get install -y apt live-build debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools
+sudo apt-get install -y apt live-build debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools curl
 
 lb config \
   --distribution resolute \
@@ -27,6 +27,19 @@ lb config \
 
 mkdir -p config/package-lists
 cp "$REPO_DIR/config/package-list.txt" config/package-lists/carsonos.list.chroot
+
+# Install the repository-hosted wallpaper into the live filesystem.
+WALLPAPER_DIR="config/includes.chroot/usr/share/backgrounds/carsonOS"
+mkdir -p "$WALLPAPER_DIR"
+curl -fL --retry 3 --retry-delay 2 \
+  "https://raw.githubusercontent.com/carjam120443-netizen/carsonOS/main/branding/gnu.jpg" \
+  -o "$WALLPAPER_DIR/gnu.jpg"
+
+# Include the XFCE desktop configuration that selects the wallpaper and uses
+# the 'Fill' image style so it covers the screen instead of tiling/stretching oddly.
+mkdir -p config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml
+cp "$REPO_DIR/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" \
+  config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
 lb build 2>&1 | tee "$REPO_DIR/build.log"
 
