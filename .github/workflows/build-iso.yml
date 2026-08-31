@@ -1,0 +1,40 @@
+name: Build carsonOS ISO
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'config/**'
+      - 'scripts/**'
+      - '.github/workflows/build-iso.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make build script executable
+        run: chmod +x scripts/build-iso.sh
+
+      - name: Build ISO
+        run: sudo ./scripts/build-iso.sh
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: carsonOS-ubuntu-amd64
+          path: |
+            out/carsonOS-ubuntu-amd64.iso
+            out/SHA256SUMS
+            build.log
+          if-no-files-found: error
+          retention-days: 14
