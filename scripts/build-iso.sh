@@ -27,14 +27,13 @@ lb config \
 mkdir -p config/package-lists
 cp "$REPO_DIR/config/package-list.txt" config/package-lists/carsonos.list.chroot
 
-# Copy repository hooks into the live-build configuration. This is required:
-# lb config creates a fresh build tree, so hooks stored in the repository are
-# not otherwise visible to live-build. GitHub's file API creates scripts as
-# non-executable files, so restore the executable bit after copying them.
-if [[ -d "$REPO_DIR/config/hooks" ]]; then
-  cp -a "$REPO_DIR/config/hooks/." config/hooks/
-  find config/hooks -type f -name '*.hook.*' -exec chmod +x {} +
+# live-build versions used on Ubuntu expect local chroot hooks directly in
+# config/hooks/*.chroot. Copy repository hooks there explicitly so they are
+# executed during lb_chroot_hooks before lb_chroot_hacks.
+if [[ -d "$REPO_DIR/config/hooks/normal" ]]; then
+  find "$REPO_DIR/config/hooks/normal" -type f -name '*.hook.chroot' -exec cp {} config/hooks/ \;
 fi
+find config/hooks -maxdepth 1 -type f -name '*.hook.chroot' -exec chmod +x {} +
 
 # Install the repository-hosted wallpaper into the live filesystem.
 WALLPAPER_DIR="config/includes.chroot/usr/share/backgrounds/carsonOS"
