@@ -6,7 +6,6 @@ set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
-# GitHub Actions provides GITHUB_WORKSPACE, but don't require it when running locally.
 REPO_DIR="${GITHUB_WORKSPACE:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 BUILD_DIR="$REPO_DIR/build"
 
@@ -22,29 +21,39 @@ lb config \
   --archive-areas "main restricted universe multiverse" \
   --binary-images iso-hybrid \
   --apt-recommends false \
-  --bootappend-live "boot=live components quiet splash"
+  --bootappend-live "boot=live components quiet splash" \
+  --memtest none
 
-mkdir -p config/package-lists
+mkdir -p config/package-lists config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml
 cp "$REPO_DIR/config/package-list.txt" config/package-lists/carsonos.list.chroot
 
-# live-build versions used on Ubuntu expect local chroot hooks directly in
-# config/hooks/*.chroot. Copy repository hooks there explicitly so they are
-# executed during lb_chroot_hooks before lb_chroot_hacks.
+# Copy repository chroot hooks, if present.
 if [[ -d "$REPO_DIR/config/hooks/normal" ]]; then
   find "$REPO_DIR/config/hooks/normal" -type f -name '*.hook.chroot' -exec cp {} config/hooks/ \;
 fi
 find config/hooks -maxdepth 1 -type f -name '*.hook.chroot' -exec chmod +x {} +
 
-# Install the repository-hosted wallpaper into the live filesystem.
+# The Ubuntu live-build stack may create dangling initrd symlinks during
+# kernel handling. Remove them immediately before binary kernel processing;
+# the actual versioned initramfs is preserved.
+cat > config/hooks/9999-remove-dangling-initrd.hook.binary <<'EOF'
+#!/bin/sh
+set -eu
+for link in chroot/boot/initrd.img chroot/boot/initrd.img.old; do
+    if [ -L "$link" ] && [ ! -e "$link" ]; then
+        echo "Removing dangling initramfs symlink: $link"
+        rm -f -- "$link"
+    fi
+done
+EOF
+chmod +x config/hooks/9999-remove-dangling-initrd.hook.binary
+
 WALLPAPER_DIR="config/includes.chroot/usr/share/backgrounds/carsonOS"
 mkdir -p "$WALLPAPER_DIR"
 curl -fL --retry 3 --retry-delay 2 \
   "https://raw.githubusercontent.com/carjam120443-netizen/carsonOS/main/branding/gnu.jpg" \
   -o "$WALLPAPER_DIR/gnu.jpg"
 
-# Include the XFCE desktop configuration that selects the wallpaper and uses
-# the 'Fill' image style so it covers the screen instead of tiling/stretching oddly.
-mkdir -p config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml
 cp "$REPO_DIR/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" \
   config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
