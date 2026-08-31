@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# carsonOS Ubuntu ISO builder
-# Uses Ubuntu's live-build tooling and the latest Ubuntu release available
-# from the configured live-build archive.
+# carsonOS Ubuntu 26.04 LTS ISO builder
+# Ubuntu 26.04 LTS is codenamed Resolute Raccoon.
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -16,10 +15,9 @@ sudo apt-get update
 sudo apt-get install -y live-build debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools
 
 lb config \
-  --distribution noble \
+  --distribution resolute \
   --archive-areas "main restricted universe multiverse" \
   --binary-images iso-hybrid \
-  --debian-installer live \
   --apt-recommends true \
   --bootappend-live "boot=live components quiet splash"
 
@@ -35,7 +33,7 @@ if [[ -z "$ISO" ]]; then
 fi
 
 mkdir -p "$GITHUB_WORKSPACE/out"
-cp "$ISO" "$GITHUB_WORKSPACE/out/carsonOS-ubuntu-amd64.iso"
-sha256sum "$GITHUB_WORKSPACE/out/carsonOS-ubuntu-amd64.iso" > "$GITHUB_WORKSPACE/out/SHA256SUMS"
+cp "$ISO" "$GITHUB_WORKSPACE/out/carsonOS-ubuntu-26.04-amd64.iso"
+sha256sum "$GITHUB_WORKSPACE/out/carsonOS-ubuntu-26.04-amd64.iso" > "$GITHUB_WORKSPACE/out/SHA256SUMS"
 
-echo "Built: $GITHUB_WORKSPACE/out/carsonOS-ubuntu-amd64.iso"
+echo "Built: $GITHUB_WORKSPACE/out/carsonOS-ubuntu-26.04-amd64.iso"
