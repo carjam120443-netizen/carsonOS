@@ -1,5 +1,7 @@
+apt
 xfce4
 xfce4-goodies
+xfce4-clipman-plugin
 lightdm
 lightdm-gtk-greeter
 network-manager
