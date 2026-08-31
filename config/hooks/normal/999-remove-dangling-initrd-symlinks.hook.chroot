@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+# Ubuntu's kernel package can leave these generic initrd symlinks dangling
+# inside the live-build chroot. live-build's chroot_hacks stage later tries
+# to chmod them and exits with status 123. Remove only the broken symlinks;
+# versioned kernel/initrd files remain untouched.
+for link in /boot/initrd.img /boot/initrd.img.old; do
+    if [ -L "$link" ] && [ ! -e "$link" ]; then
+        rm -f "$link"
+    fi
+done
