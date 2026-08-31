@@ -21,8 +21,7 @@ lb config \
   --distribution resolute \
   --archive-areas "main restricted universe multiverse" \
   --binary-images iso-hybrid \
-  --debian-installer live \
-  --apt-recommends true \
+  --apt-recommends false \
   --bootappend-live "boot=live components quiet splash"
 
 mkdir -p config/package-lists
