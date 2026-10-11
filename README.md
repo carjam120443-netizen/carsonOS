@@ -2,83 +2,93 @@
 
 **A custom Arch Linux-based desktop operating system.**
 
-CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with original Carson branding, a ready-to-use XFCE desktop, and a live ISO that boots on a computer and guides the user through installing the system to disk.
+CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with original Carson branding, a ready-to-use XFCE desktop, and a live ISO that boots on a computer and provides an installation entry point.
 
-> **Project status:** Early development. The live ISO, installer, and hardware support are not yet considered release-ready. Features listed as planned are goals, not claims about the current build.
+> **Project status:** Early development. The profile and configuration are committed, but an ISO must still be built and tested before the project can claim a working release. The current installer entry launches Arch Linux's guided `archinstall` utility; it is not yet a custom graphical installer.
 
 ## Goals
 
-- Boot into a usable live desktop from a USB drive or virtual machine.
-- Provide a clear installation path from the live environment to an installed system.
-- Use XFCE for a lightweight, familiar desktop experience.
+- Boot into a usable live XFCE desktop from USB or a virtual machine.
+- Provide a clear path from the live environment to an installed system.
 - Keep Arch Linux's standard package-management workflow with `pacman`.
-- Add original CarsonOS wallpapers, icons, terminal styling, and system information.
+- Add original CarsonOS wallpaper, terminal styling, and system information tools.
 - Keep the build reproducible and the project easy to understand and contribute to.
 
 ## Planned stack
 
-| Component | Plan |
+| Component | Implementation |
 | --- | --- |
 | Base | Arch Linux, x86_64 |
-| Live image | `archiso` |
+| Live image | `archiso` profile in `profile/` |
 | Desktop | XFCE |
+| Display manager | LightDM with automatic login in the live session |
 | Init and services | systemd |
 | Package management | pacman and official Arch repositories |
-| Installer | Start with a reliable installation workflow; evaluate Calamares for a graphical installer |
-| Filesystem | ext4 as the straightforward initial default |
+| Installer entry point | `archinstall` in a terminal |
 | Initial testing | VirtualBox, then selected physical test systems |
 
-CarsonOS will build on Arch Linux rather than maintaining a separate kernel or package format. Custom CarsonOS tools should initially be packaged separately and use the normal system tools underneath.
+The live-session account is `liveuser`. Its passwordless sudo rule is intended only for the disposable live environment. Do not copy that rule into an installed system.
 
-## Intended live ISO experience
+## Build the ISO
 
-The intended first release should:
+Build from an Arch Linux installation or an Arch Linux virtual machine, not directly from Windows. Allocate enough free disk space for downloaded packages, the temporary build tree, and the final ISO.
 
-1. Boot into the CarsonOS live desktop.
-2. Provide working basic networking, audio, and desktop settings where supported by the hardware.
-3. Clearly explain how to start the installer.
-4. Install a bootable CarsonOS system onto the selected disk.
-5. Reboot into the installed desktop.
-
-The installer must clearly identify the target disk and explain that installing can erase data on that disk. Back up important files before testing an installer.
-
-## Building
-
-Build the ISO from an Arch Linux environment or an Arch Linux virtual machine. Install the required tools:
+Install the tools:
 
 ```bash
 sudo pacman -Syu
 sudo pacman -S --needed archiso git
+git clone https://github.com/carjam120443-netizen/carsonOS.git
+cd carsonOS
 ```
 
-The project will use an `archiso` profile for the live image. Once the profile is added to this repository, build instructions will be documented here and kept in sync with the actual profile. Build commands depend on the profile directory and should not be treated as available until those files are present.
+Build the ISO:
+
+```bash
+sudo bash scripts/build-iso.sh
+```
+
+The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-work` for temporary build files. You can change the work directory by setting `CARSONOS_WORK_DIR` before running the script.
+
+## Try the live image
+
+1. Create a new VirtualBox VM with a 64-bit Linux profile and a disposable virtual disk.
+2. Attach the generated ISO as the optical drive.
+3. Boot the VM and choose **CarsonOS Live Desktop**.
+4. The intended live session uses XFCE, LightDM, NetworkManager, and the CarsonOS wallpaper and terminal helpers.
+5. Open **Install CarsonOS** to start `archinstall`.
+
+The installer is the standard Arch guided installer. Review every option and configure the installed system's bootloader, disk layout, user, network, and desktop packages carefully. Installing can erase the selected disk. For early tests, use only a disposable VM disk.
+
+## Included CarsonOS tools
+
+- `carsonfetch` — basic system and hardware summary.
+- `carson-help` — quick reference for common commands.
+- `update-system` — shell alias for a full `pacman -Syu` system update.
 
 ## Development roadmap
 
-- [ ] Add and validate the initial `archiso` profile.
-- [ ] Boot the unmodified live image in VirtualBox.
-- [ ] Add XFCE, networking, audio, and a useful default application set.
-- [ ] Create the CarsonOS wallpaper, logo, and desktop defaults.
-- [ ] Implement and test the install-to-disk workflow.
-- [ ] Test fresh installs, rebooting, updates, networking, and common recovery scenarios.
+- [x] Add an initial archiso profile for BIOS and UEFI boot.
+- [x] Define the first XFCE desktop package set and live-session defaults.
+- [x] Add original CarsonOS vector wallpaper and terminal helper commands.
+- [ ] Build the ISO successfully on a clean Arch Linux VM.
+- [ ] Test booting in VirtualBox in BIOS and UEFI modes.
+- [ ] Verify networking, sound, display settings, and the installer entry.
+- [ ] Complete fresh-install and reboot testing.
+- [ ] Consider a graphical installer after the first installation path is reliable.
 - [ ] Publish a clearly labelled preview ISO with known issues and installation notes.
 
 ## Updates and maintenance
 
-CarsonOS follows Arch Linux's rolling-release model. Keep the system updated using supported full-system upgrade workflows; avoid partial upgrades. ISO images should be rebuilt and tested regularly so new installations do not start from a stale package set.
+CarsonOS follows Arch Linux's rolling-release model. Keep the system updated using supported full-system upgrade workflows; avoid partial upgrades. Rebuild and test ISO images regularly so new installations do not start from a stale package set.
 
 ## Contributing and bug reports
 
-Suggestions, bug reports, and contributions are welcome. When reporting an issue, include:
-
-- Whether the issue occurred in VirtualBox or on physical hardware.
-- The ISO build or commit you tested.
-- The steps to reproduce the issue.
-- Relevant error messages or logs, with personal information removed.
+When reporting an issue, include the ISO build or commit, whether the issue occurred in VirtualBox or on physical hardware, steps to reproduce, and relevant logs with personal information removed.
 
 ## Disclaimer
 
-CarsonOS is an independent project based on Arch Linux. It is not an official Arch Linux release. Early builds are experimental: test them in a virtual machine first and do not install them over a system containing important data.
+CarsonOS is an independent project based on Arch Linux, not an official Arch Linux release. Early builds are experimental. Test them in a virtual machine first and do not install them over a system containing important data.
 
 ## License
 
