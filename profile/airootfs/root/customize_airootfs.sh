@@ -186,32 +186,12 @@ systemctl enable NetworkManager.service
 systemctl enable lightdm.service
 systemctl enable systemd-timesyncd.service
 
-# Build yay from the AUR as an ordinary user; makepkg must never run as root.
-if ! command -v yay >/dev/null 2>&1; then
-  YAY_BUILD_DIR="$(mktemp -d /tmp/carsonos-yay-build.XXXXXX)"
-  YAY_BUILD_USER=carsonos-yay-builder
-  pacman -Qq | sort > "$YAY_BUILD_DIR/packages.before"
-  pacman -S --needed --noconfirm base-devel go
-  useradd --create-home --shell /bin/bash "$YAY_BUILD_USER"
-  install -d -m 0755 -o "$YAY_BUILD_USER" -g "$YAY_BUILD_USER" "$YAY_BUILD_DIR/src"
-  runuser -u "$YAY_BUILD_USER" -- git clone --depth 1 https://aur.archlinux.org/yay.git "$YAY_BUILD_DIR/src/yay"
-  runuser -u "$YAY_BUILD_USER" -- bash -c "cd '$YAY_BUILD_DIR/src/yay' && makepkg --noconfirm"
-  YAY_PACKAGE="$(find "$YAY_BUILD_DIR/src/yay" -maxdepth 1 -type f -name 'yay-[0-9]*-*.pkg.tar.zst' -print -quit)"
-  if [[ -z "$YAY_PACKAGE" ]]; then
-    echo "Could not find the built yay package archive." >&2
-    exit 1
-  fi
-  pacman -U --noconfirm "$YAY_PACKAGE"
-  userdel -r "$YAY_BUILD_USER" || true
-  pacman -Qq | sort > "$YAY_BUILD_DIR/packages.after"
-  mapfile -t YAY_BUILD_ONLY < <(comm -13 "$YAY_BUILD_DIR/packages.before" "$YAY_BUILD_DIR/packages.after")
-  for attempt in 1 2 3 4; do
-    for package in "${YAY_BUILD_ONLY[@]}"; do
-      [[ "$package" == "yay" ]] && continue
-      if pacman -Q "$package" >/dev/null 2>&1; then
-        pacman -R --noconfirm "$package" >/dev/null 2>&1 || true
-      fi
-    done
-  done
-  rm -rf "$YAY_BUILD_DIR"
+# Install the yay package built by scripts/build-iso.sh in the build environment.
+# The target live root stays free of the Go compiler and base-devel toolchain.
+YAY_PACKAGE="/root/yay.pkg.tar.zst"
+if [[ ! -f "$YAY_PACKAGE" ]]; then
+  echo "Missing staged yay package. Build the ISO with scripts/build-iso.sh." >&2
+  exit 1
 fi
+pacman -U --noconfirm "$YAY_PACKAGE"
+rm -f "$YAY_PACKAGE"
