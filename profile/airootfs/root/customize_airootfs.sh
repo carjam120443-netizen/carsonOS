@@ -37,6 +37,8 @@ if ! grep -q '^\\[chaotic-aur\\]
 if ! id liveuser >/dev/null 2>&1; then
   useradd --create-home --shell /bin/bash --groups wheel,audio,video,storage,optical,power liveuser
 fi
+# Requested default password for the live account (autologin remains enabled).
+printf '%s\n' 'liveuser:live' | chpasswd
 
 install -d -m 0755 /etc/sudoers.d
 printf '%s\n' 'liveuser ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/10-carsonos-live
