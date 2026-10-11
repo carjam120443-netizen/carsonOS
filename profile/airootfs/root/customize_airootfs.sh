@@ -1,6 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Preserve the original repository configuration before enabling Chaotic-AUR.
+# These copies let users restore the original Arch repository setup later.
+install -d -m 0755 /etc/pacman.d/carsonos-repo-backup
+if [[ ! -e /etc/pacman.d/carsonos-repo-backup/pacman.conf ]]; then
+  cp -a /etc/pacman.conf /etc/pacman.d/carsonos-repo-backup/pacman.conf
+fi
+if [[ -f /etc/pacman.d/mirrorlist && ! -e /etc/pacman.d/carsonos-repo-backup/mirrorlist ]]; then
+  cp -a /etc/pacman.d/mirrorlist /etc/pacman.d/carsonos-repo-backup/mirrorlist
+fi
+if ! grep -q '^\\[chaotic-aur\\]' /etc/pacman.conf; then
+  cat >> /etc/pacman.conf <<'EOF'
+
+# CarsonOS: Chaotic-AUR binary package repository
+[chaotic-aur]
+Include = /etc/pacman.d/chaotic-mirrorlist
+EOF
+fi
+
 # This script is run by the live image's first-boot customization service.
 if ! id liveuser >/dev/null 2>&1; then
   useradd --create-home --shell /bin/bash --groups wheel,audio,video,storage,optical,power liveuser

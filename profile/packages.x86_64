@@ -70,6 +70,11 @@ mousepad
 ristretto
 xfce4-screenshooter
 
+# AUR helper and Chaotic-AUR repository support
+yay
+chaotic-keyring
+chaotic-mirrorlist
+
 # Browser, fonts, and audio
 firefox
 ttf-dejavu
