@@ -8,11 +8,15 @@ WORK="${CARSONOS_WORK_DIR:-/tmp/carsonos-archiso-work}"
 
 if [[ $EUID -ne 0 ]]; then
   echo "Run this script with sudo from an Arch Linux build environment." >&2
-  echo "Example: sudo ./scripts/build-iso.sh" >&2
+  echo "Example: sudo bash scripts/build-iso.sh" >&2
   exit 1
 fi
 if ! command -v mkarchiso >/dev/null 2>&1; then
   echo "mkarchiso is missing. Install archiso with: pacman -S --needed archiso" >&2
+  exit 1
+fi
+if [[ ! -f "$PROFILE/profiledef.sh" || ! -f "$PROFILE/packages.x86_64" ]]; then
+  echo "The CarsonOS archiso profile is incomplete." >&2
   exit 1
 fi
 mkdir -p "$OUT"
