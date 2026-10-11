@@ -21,6 +21,7 @@ archinstall
 
 # Networking and hardware support
 networkmanager
+network-manager-applet
 openssh
 wpa_supplicant
 iwd
@@ -29,6 +30,10 @@ wireless-regdb
 sof-firmware
 systemd-resolvconf
 mesa
+vulkan-radeon
+vulkan-intel
+xf86-video-amdgpu
+xf86-video-intel
 
 # Desktop and display manager
 xorg-server
@@ -37,13 +42,20 @@ xfce4
 xfce4-goodies
 lightdm
 lightdm-gtk-greeter
-lightdm-gtk-greeter-settings
+xfce4-notifyd
+xfce4-power-manager
+xfce4-pulseaudio-plugin
 xdg-user-dirs
 xdg-utils
 gvfs
+gvfs-mtp
+thunar-volman
 file-roller
 thunar-archive-plugin
 pavucontrol
+mousepad
+ristretto
+xfce4-screenshooter
 
 # Browser, fonts, and audio
 firefox
@@ -52,6 +64,7 @@ noto-fonts
 pipewire
 pipewire-alsa
 pipewire-pulse
+pipewire-jack
 wireplumber
 alsa-utils
 
