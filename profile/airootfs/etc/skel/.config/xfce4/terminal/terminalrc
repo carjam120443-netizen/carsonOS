@@ -1,0 +1,18 @@
+[Configuration]
+ColorForeground=#d8dee9
+ColorBackground=#101820
+ColorCursor=#64ff8a
+ColorPalette=#17212b;#ff6b6b;#64ff8a;#ffd166;#66b3ff;#c792ea;#56d6d0;#d8dee9;#52616b;#ff8787;#8cffad;#ffe08a;#8ac5ff;#d9a7ff;#80e8df;#ffffff
+FontName=DejaVu Sans Mono 10
+MiscAlwaysShowTabs=FALSE
+MiscBell=FALSE
+MiscBordersDefault=TRUE
+MiscCursorBlinks=FALSE
+MiscCursorShape=TERMINAL_CURSOR_SHAPE_BLOCK
+MiscDefaultGeometry=100x30
+MiscInheritGeometry=FALSE
+MiscMenubarDefault=TRUE
+MiscMouseAutohide=TRUE
+MiscToolbarDefault=FALSE
+ScrollingBar=TERMINAL_SCROLLBAR_NONE
+ScrollingLines=10000
