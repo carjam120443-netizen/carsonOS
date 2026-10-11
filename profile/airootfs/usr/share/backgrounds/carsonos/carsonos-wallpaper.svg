@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08111f"/>
+      <stop offset="0.55" stop-color="#122744"/>
+      <stop offset="1" stop-color="#07101b"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#25e6a4" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#2885ff" stop-opacity=".15"/>
+    </linearGradient>
+    <pattern id="grid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M72 0H0V72" fill="none" stroke="#8cb9e8" stroke-opacity=".08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#grid)"/>
+  <circle cx="1510" cy="280" r="420" fill="#176b9b" opacity=".13"/>
+  <circle cx="1510" cy="280" r="285" fill="none" stroke="url(#glow)" stroke-width="2" opacity=".7"/>
+  <circle cx="1510" cy="280" r="225" fill="none" stroke="#43e8b3" stroke-width="1" opacity=".3"/>
+  <path d="M0 850 500 590 820 760 1260 370 1920 620V1080H0Z" fill="#07101b" opacity=".55"/>
+  <path d="M0 920 470 680 840 825 1290 485 1920 720" fill="none" stroke="url(#glow)" stroke-width="3" opacity=".8"/>
+  <g transform="translate(150 360)">
+    <path d="M0 30 210 0 210 210 0 240Z" fill="#25e6a4" opacity=".94"/>
+    <path d="M232 0 450 30 450 240 232 210Z" fill="#2885ff" opacity=".92"/>
+    <path d="M0 264 210 234 210 444 0 414Z" fill="#2885ff" opacity=".72"/>
+    <path d="M232 234 450 264 450 414 232 444Z" fill="#25e6a4" opacity=".68"/>
+    <text x="520" y="200" font-family="sans-serif" font-size="100" font-weight="700" fill="#f3f8ff">CarsonOS</text>
+    <text x="528" y="270" font-family="monospace" font-size="31" letter-spacing="8" fill="#9cc6e8">BUILD YOUR OWN WORKFLOW</text>
+  </g>
+</svg>
