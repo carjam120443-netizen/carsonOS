@@ -173,23 +173,11 @@ chown liveuser:liveuser /home/liveuser/.bashrc /home/liveuser/.bashrc.carsonos
 systemctl enable NetworkManager.service
 systemctl enable lightdm.service
 systemctl enable systemd-timesyncd.service
- /etc/pacman.conf; then
-  cat >> /etc/pacman.conf <<'EOF'
-
-# CarsonOS optional Chaotic-AUR repository
-[chaotic-aur]
-Include = /etc/pacman.d/chaotic-mirrorlist
-EOF
-fi
-pacman -Syu --noconfirm
-echo "Chaotic-AUR enabled; original config backed up at $BACKUP_DIR/pacman.conf"
-CHAOTIC
-chmod 0755 /usr/local/bin/enable-chaotic-aur
-
 # This script is run by the live image's first-boot customization service.
 if ! id liveuser >/dev/null 2>&1; then
   useradd --create-home --shell /bin/bash --groups wheel,audio,video,storage,optical,power liveuser
 fi
+printf '%s\n' 'liveuser:live' | chpasswd
 
 install -d -m 0755 /etc/sudoers.d
 printf '%s\n' 'liveuser ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/10-carsonos-live
