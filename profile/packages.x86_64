@@ -38,8 +38,18 @@ xf86-video-intel
 # Desktop and display manager
 xorg-server
 xorg-xinit
-xfce4
-xfce4-goodies
+exo
+garcon
+thunar
+tumbler
+xfce4-appfinder
+xfce4-panel
+xfce4-power-manager
+xfce4-session
+xfce4-settings
+xfconf
+xfdesktop
+xfwm4
 xfce4-terminal
 lightdm
 lightdm-gtk-greeter
