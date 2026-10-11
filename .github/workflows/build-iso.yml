@@ -45,6 +45,10 @@ jobs:
               pacman -S --needed --noconfirm archiso git
               # Bootstrap Chaotic-AUR in the build container so archiso can
               # resolve yay and the repository support packages from the profile.
+              # The disposable Arch container may not have a pacman keyring yet.
+              # Initialize it before importing and locally trusting Chaotic-AUR's key.
+              pacman-key --init
+              pacman-key --populate archlinux
               pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
               pacman-key --lsign-key 3056513887B78AEB
               pacman -U --noconfirm \
