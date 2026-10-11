@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111d"/>
+      <stop offset=".55" stop-color="#101d2a"/>
+      <stop offset="1" stop-color="#06151b"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4cff91" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#35b8ff" stop-opacity=".2"/>
+    </linearGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#8bb6c9" stroke-opacity=".075" stroke-width="1"/>
+    </pattern>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#grid)"/>
+  <circle cx="1430" cy="390" r="250" fill="#2de879" opacity=".12" filter="url(#glow)"/>
+  <path d="M1050 0L1920 0 1920 1080 1510 1080 930 320Z" fill="url(#beam)" opacity=".14"/>
+  <path d="M1180 0L1920 0 1920 760 1630 760Z" fill="#35b8ff" opacity=".055"/>
+  <g transform="translate(160 300)">
+    <path d="M0 0H188V188H0Z" rx="24" fill="#4cff91"/>
+    <path d="M218 0H406V188H218Z" fill="#35b8ff"/>
+    <path d="M0 218H188V406H0Z" fill="#35b8ff" opacity=".82"/>
+    <path d="M218 218H406V406H218Z" fill="#4cff91" opacity=".72"/>
+  </g>
+  <text x="625" y="485" fill="#f1f7fb" font-family="DejaVu Sans, sans-serif" font-size="118" font-weight="700" letter-spacing="-3">CarsonOS</text>
+  <text x="632" y="555" fill="#91a9b8" font-family="DejaVu Sans Mono, monospace" font-size="27" letter-spacing="7">YOUR DESKTOP. YOUR SYSTEM.</text>
+  <path d="M630 605H1110" stroke="#4cff91" stroke-width="4" stroke-linecap="round"/>
+  <text x="632" y="660" fill="#78909f" font-family="DejaVu Sans Mono, monospace" font-size="20">ARCH LINUX · XFCE · OPEN SOURCE</text>
+  <g fill="none" stroke="#4cff91" stroke-opacity=".28" stroke-width="2">
+    <path d="M1250 810H1740V900H1830"/>
+    <path d="M1370 760V700H1530V620"/>
+    <path d="M1190 940H1400V1000H1620"/>
+  </g>
+  <circle cx="1250" cy="810" r="5" fill="#4cff91"/>
+  <circle cx="1530" cy="620" r="5" fill="#35b8ff"/>
+  <circle cx="1620" cy="1000" r="5" fill="#4cff91"/>
+</svg>
