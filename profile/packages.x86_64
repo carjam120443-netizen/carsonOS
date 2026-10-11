@@ -19,6 +19,7 @@ man-db
 man-pages
 which
 archinstall
+fastfetch
 
 # Networking and hardware support
 networkmanager

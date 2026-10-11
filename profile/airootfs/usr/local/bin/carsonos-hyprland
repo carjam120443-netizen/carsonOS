@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $EUID -ne 0 ]]; then
+  exec sudo /usr/local/bin/carsonos-hyprland "$@"
+fi
+
+echo "Installing the optional CarsonOS Hyprland desktop..."
+pacman -Syu --needed --noconfirm \
+  hyprland \
+  xdg-desktop-portal-hyprland \
+  xdg-desktop-portal-gtk \
+  waybar \
+  wofi \
+  kitty \
+  polkit-kde-agent
+
+# Turn off LightDM autologin in this live session so the session chooser is available.
+LIGHTDM_CONF=/etc/lightdm/lightdm.conf.d/50-carsonos.conf
+if [[ -f "$LIGHTDM_CONF" ]]; then
+  sed -i -e '/^autologin-user=/d' -e '/^autologin-user-timeout=/d' "$LIGHTDM_CONF"
+fi
+
+echo
+echo "Hyprland is installed for this live session."
+echo "Log out, choose Hyprland from the LightDM session menu, and log in again."
+echo "XFCE remains the default desktop in CarsonOS."
+echo "Note: live-session package changes are temporary and reset when you reboot."

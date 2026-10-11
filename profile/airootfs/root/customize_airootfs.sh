@@ -82,6 +82,9 @@ cat > /etc/skel/.bashrc.carsonos <<'EOF'
 # CarsonOS interactive shell additions.
 alias ll='ls -alF'
 alias update-system='sudo pacman -Syu'
+if [[ $- == *i* ]] && command -v fastfetch >/dev/null 2>&1; then
+  fastfetch
+fi
 alias carson-help='printf "%s\\n" "CarsonOS quick help:" "  update-system  Update installed packages" "  pacman -S <pkg> Install a package" "  carsonfetch     Show system information"'
 EOF
 if ! grep -q 'bashrc.carsonos' /etc/skel/.bashrc; then
@@ -94,6 +97,9 @@ cat <<'HELP'
 CarsonOS quick help
 
   carsonfetch       Show system information
+  fastfetch         Show system information with the CarsonOS ASCII logo
+  yay               Search and install packages from official repos and the AUR
+  carsonos-hyprland Install the optional Hyprland desktop
   carson-help       Show this help
   update-system     Update packages with pacman
   carsonos-installer Start the guided Arch installation assistant
@@ -163,13 +169,49 @@ StartupNotify=true
 EOF
 install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
 install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-hyprland.desktop /home/liveuser/Desktop/Install\ Hyprland.desktop
+chmod 0755 /usr/local/bin/carsonos-hyprland
 chown -R liveuser:liveuser /home/liveuser/Desktop
 cp /etc/skel/.bashrc /home/liveuser/.bashrc
 cp /etc/skel/.bashrc.carsonos /home/liveuser/.bashrc.carsonos
+install -d -m 0755 /home/liveuser/.config
+cp -a /etc/skel/.config/fastfetch /home/liveuser/.config/
+cp -a /etc/skel/.config/hypr /home/liveuser/.config/
 chown liveuser:liveuser /home/liveuser/.bashrc /home/liveuser/.bashrc.carsonos
+chown -R liveuser:liveuser /home/liveuser/.config/fastfetch /home/liveuser/.config/hypr
 
 # NetworkManager starts for Ethernet and Wi-Fi; the applet exposes Wi-Fi controls.
 # PipeWire's user sockets provide audio and PulseAudio compatibility.
 systemctl enable NetworkManager.service
 systemctl enable lightdm.service
 systemctl enable systemd-timesyncd.service
+
+# Build yay from the AUR as an ordinary user; makepkg must never run as root.
+if ! command -v yay >/dev/null 2>&1; then
+  YAY_BUILD_DIR="$(mktemp -d /tmp/carsonos-yay-build.XXXXXX)"
+  YAY_BUILD_USER=carsonos-yay-builder
+  pacman -Qq | sort > "$YAY_BUILD_DIR/packages.before"
+  pacman -S --needed --noconfirm base-devel go
+  useradd --create-home --shell /bin/bash "$YAY_BUILD_USER"
+  install -d -m 0755 -o "$YAY_BUILD_USER" -g "$YAY_BUILD_USER" "$YAY_BUILD_DIR/src"
+  runuser -u "$YAY_BUILD_USER" -- git clone --depth 1 https://aur.archlinux.org/yay.git "$YAY_BUILD_DIR/src/yay"
+  runuser -u "$YAY_BUILD_USER" -- bash -c "cd '$YAY_BUILD_DIR/src/yay' && makepkg --noconfirm"
+  YAY_PACKAGE="$(find "$YAY_BUILD_DIR/src/yay" -maxdepth 1 -type f -name 'yay-[0-9]*-*.pkg.tar.zst' -print -quit)"
+  if [[ -z "$YAY_PACKAGE" ]]; then
+    echo "Could not find the built yay package archive." >&2
+    exit 1
+  fi
+  pacman -U --noconfirm "$YAY_PACKAGE"
+  userdel -r "$YAY_BUILD_USER" || true
+  pacman -Qq | sort > "$YAY_BUILD_DIR/packages.after"
+  mapfile -t YAY_BUILD_ONLY < <(comm -13 "$YAY_BUILD_DIR/packages.before" "$YAY_BUILD_DIR/packages.after")
+  for attempt in 1 2 3 4; do
+    for package in "${YAY_BUILD_ONLY[@]}"; do
+      [[ "$package" == "yay" ]] && continue
+      if pacman -Q "$package" >/dev/null 2>&1; then
+        pacman -R --noconfirm "$package" >/dev/null 2>&1 || true
+      fi
+    done
+  done
+  rm -rf "$YAY_BUILD_DIR"
+fi

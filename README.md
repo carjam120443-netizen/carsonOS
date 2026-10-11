@@ -5,7 +5,7 @@
 
 CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with original Carson branding, a ready-to-use XFCE desktop, and a live ISO that boots on a computer and provides an installation entry point.
 
-> **Project status:** Early development. The profile and configuration are committed, but an ISO must still be built and tested before the project can claim a working release. The installer entry launches Arch Linux's guided `archinstall` utility; it is not yet a custom graphical installer.
+> **Project status:** Early development. The ISO builds in GitHub Actions and has booted to the CarsonOS XFCE live desktop in VirtualBox. Network/package installation and the optional Hyprland path are still being tested. The installer entry launches Arch Linux's guided `archinstall` utility; it is not yet a custom graphical installer.
 
 ## Goals
 
@@ -26,7 +26,9 @@ CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with origin
 | Networking | NetworkManager and its XFCE-friendly tray applet |
 | Audio | PipeWire, WirePlumber, PulseAudio compatibility, and volume controls |
 | Init and services | systemd |
-| Package management | pacman and official Arch repositories |
+| Package management | pacman, official Arch repositories, and `yay` built from its AUR PKGBUILD |
+| System information | `fastfetch` with a custom CarsonOS ASCII logo, shown when a terminal opens |
+| Optional desktop | Hyprland install shortcut; XFCE remains the default |
 | Installer entry point | Desktop icon and application-menu entry launching `archinstall` |
 | Initial testing | VirtualBox, then selected physical test systems |
 
@@ -60,14 +62,19 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 3. Boot the VM and choose **CarsonOS Live Desktop**.
 4. The intended live session uses XFCE, LightDM, NetworkManager, the volume controls, and the CarsonOS wallpaper and terminal helpers.
 5. Use the NetworkManager tray icon to connect to Wi-Fi or inspect wired networking.
-6. Double-click **Install CarsonOS** on the desktop, or find it in the System application menu, to open the guided installer in a terminal.
+6. Fastfetch displays the custom CarsonOS ASCII logo when you open a terminal.
+7. Double-click **Install Hyprland** to install the optional Hyprland/Wayland desktop in the live session. Then log out and select **Hyprland** from the LightDM session menu. XFCE remains the default.
+8. Double-click **Install CarsonOS** on the desktop, or find it in the System application menu, to open the guided installer in a terminal.
 
 The installer is the standard Arch guided installer. Review every option and configure the installed system's bootloader, disk layout, user, network, and desktop packages carefully. Installing can erase the selected disk. For early tests, use only a disposable VM disk.
 
 ## Included CarsonOS tools
 
+- `fastfetch` — system summary with the built-in CarsonOS ASCII logo; it runs automatically when an interactive terminal opens.
+- `yay` — AUR helper built during the ISO customization step. AUR packages are community-maintained; review PKGBUILDs before installing packages.
 - `carsonfetch` — basic system and hardware summary.
 - `carson-help` — quick reference for common commands.
+- `carsonos-hyprland` — installs Hyprland and its supporting Wayland tools on demand.
 - `carsonos-installer` — starts the guided installer.
 - `update-system` — shell alias for a full `pacman -Syu` system update.
 
@@ -78,8 +85,9 @@ The installer is the standard Arch guided installer. Review every option and con
 - [x] Add original CarsonOS vector wallpaper and terminal helper commands.
 - [x] Add NetworkManager tray controls and PipeWire audio packages.
 - [x] Add a desktop and menu launcher for the guided installer.
-- [ ] Build the ISO successfully on a clean Arch Linux VM.
-- [ ] Test booting in VirtualBox in BIOS and UEFI modes.
+- [x] Build the ISO successfully in GitHub Actions.
+- [x] Boot the live desktop in VirtualBox and verify the CarsonOS wallpaper.
+- [ ] Test booting in both BIOS and UEFI modes.
 - [ ] Verify networking, sound, display settings, and the installer entry.
 - [ ] Complete fresh-install and reboot testing.
 - [ ] Ensure the installed system receives CarsonOS branding and desktop defaults.
