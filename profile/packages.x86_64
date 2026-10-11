@@ -1,8 +1,13 @@
-# CarsonOS base and live environment
+# CarsonOS base and archiso boot support
 base
 linux
 linux-firmware
 mkinitcpio
+mkinitcpio-archiso
+syslinux
+efibootmgr
+amd-ucode
+intel-ucode
 sudo
 git
 nano
@@ -12,9 +17,18 @@ less
 man-db
 man-pages
 which
+archinstall
+
+# Networking and hardware support
 networkmanager
 openssh
-archinstall
+wpa_supplicant
+iwd
+iw
+wireless-regdb
+sof-firmware
+systemd-resolvconf
+mesa
 
 # Desktop and display manager
 xorg-server
@@ -41,10 +55,14 @@ pipewire-pulse
 wireplumber
 alsa-utils
 
-# Basic hardware and diagnostics
-mesa
+# Storage, filesystem, and installation tools
 dosfstools
 exfatprogs
 ntfs-3g
+e2fsprogs
+btrfs-progs
+cryptsetup
+lvm2
 parted
 gptfdisk
+squashfs-tools
