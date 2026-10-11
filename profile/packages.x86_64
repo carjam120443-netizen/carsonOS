@@ -1,0 +1,50 @@
+# CarsonOS base and live environment
+base
+linux
+linux-firmware
+mkinitcpio
+sudo
+git
+nano
+vim
+bash-completion
+less
+man-db
+man-pages
+which
+networkmanager
+openssh
+archinstall
+
+# Desktop and display manager
+xorg-server
+xorg-xinit
+xfce4
+xfce4-goodies
+lightdm
+lightdm-gtk-greeter
+lightdm-gtk-greeter-settings
+xdg-user-dirs
+xdg-utils
+gvfs
+file-roller
+thunar-archive-plugin
+pavucontrol
+
+# Browser, fonts, and audio
+firefox
+ttf-dejavu
+noto-fonts
+pipewire
+pipewire-alsa
+pipewire-pulse
+wireplumber
+alsa-utils
+
+# Basic hardware and diagnostics
+mesa
+dosfstools
+exfatprogs
+ntfs-3g
+parted
+gptfdisk
