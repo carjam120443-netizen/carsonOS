@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Runs while mkarchiso assembles the live root filesystem.
+# Runs in the temporary root filesystem during mkarchiso.
 if ! id liveuser >/dev/null 2>&1; then
   useradd --create-home --shell /bin/bash --groups wheel,audio,video,storage,optical,power liveuser
 fi
@@ -20,15 +20,19 @@ autologin-user-timeout=0
 EOF
 
 install -d -m 0755 /etc/skel
+touch /etc/skel/.bashrc
 cat > /etc/skel/.bashrc.carsonos <<'EOF'
 # CarsonOS interactive shell additions.
 alias ll='ls -alF'
 alias update-system='sudo pacman -Syu'
 alias carson-help='printf "%s\\n" "CarsonOS quick help:" "  update-system  Update installed packages" "  pacman -S <pkg> Install a package" "  carsonfetch     Show system information"'
 EOF
-if ! grep -q 'bashrc.carsonos' /etc/skel/.bashrc 2>/dev/null; then
+if ! grep -q 'bashrc.carsonos' /etc/skel/.bashrc; then
   printf '\n# CarsonOS defaults\n[[ -f ~/.bashrc.carsonos ]] && source ~/.bashrc.carsonos\n' >> /etc/skel/.bashrc
 fi
+cp /etc/skel/.bashrc /home/liveuser/.bashrc
+cp /etc/skel/.bashrc.carsonos /home/liveuser/.bashrc.carsonos
+chown liveuser:liveuser /home/liveuser/.bashrc /home/liveuser/.bashrc.carsonos
 
 cat > /usr/local/bin/carson-help <<'EOF'
 #!/usr/bin/env bash
@@ -63,7 +67,7 @@ printf '  %-12s %s\n' 'Kernel' "$(uname -r)"
 printf '  %-12s %s\n' 'Architecture' "$(uname -m)"
 printf '  %-12s %s\n' 'Hostname' "$(hostname)"
 if command -v lscpu >/dev/null 2>&1; then
-  printf '  %-12s %s\n' 'CPU' "$(lscpu | awk -F: '/Model name/ {sub(/^[ \\t]+/, "", $2); print $2; exit}')"
+  printf '  %-12s %s\n' 'CPU' "$(lscpu | awk -F: '/Model name/ {sub(/^[ \t]+/, "", $2); print $2; exit}')"
 fi
 if command -v free >/dev/null 2>&1; then
   printf '  %-12s %s\n' 'Memory' "$(free -h | awk '/^Mem:/ {print $3 " used / " $2; exit}')"
@@ -74,13 +78,11 @@ chmod 0755 /usr/local/bin/carsonfetch
 cat > /etc/motd <<'EOF'
 Welcome to CarsonOS Live!
 
-This is an early development image. Use carson-help for quick commands.
-Run carsonfetch to display system information.
-The Install CarsonOS launcher starts archinstall; review every disk choice.
-Back up important files before installing.
+Use carson-help for quick commands and carsonfetch for system information.
+The Install CarsonOS launcher starts the guided archinstall utility.
+Review every disk choice carefully; installation can erase data.
 EOF
 
-install -d -m 0755 /etc/xdg/autostart
 install -d -m 0755 /usr/share/applications
 cat > /usr/share/applications/carsonos-installer.desktop <<'EOF'
 [Desktop Entry]
