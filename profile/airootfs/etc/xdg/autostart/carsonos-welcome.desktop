@@ -2,7 +2,7 @@
 Type=Application
 Name=CarsonOS Welcome
 Comment=Show first-session CarsonOS tips
-Exec=xfce4-terminal --title=CarsonOS-Welcome --command=carson-help
+Exec=xfce4-terminal --hold --title=CarsonOS-Welcome --command=carson-help
 Icon=computer
 Terminal=false
 OnlyShowIn=XFCE;
