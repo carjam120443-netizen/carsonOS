@@ -193,5 +193,11 @@ if [[ ! -f "$YAY_PACKAGE" ]]; then
   echo "Missing staged yay package. Build the ISO with scripts/build-iso.sh." >&2
   exit 1
 fi
-pacman -U --noconfirm "$YAY_PACKAGE"
-rm -f "$YAY_PACKAGE"
+
+# CheckSpace cannot determine a mount point for the target root while this
+# customization runs inside mkarchiso's chroot. Disable only that check for
+# this local package transaction; keep all other Pacman settings unchanged.
+YAY_PACMAN_CONFIG="$(mktemp /tmp/carsonos-pacman-yay.XXXXXX.conf)"
+sed '/^[[:space:]]*CheckSpace[[:space:]]*$/d' /etc/pacman.conf > "$YAY_PACMAN_CONFIG"
+pacman --config "$YAY_PACMAN_CONFIG" -U --noconfirm "$YAY_PACKAGE"
+rm -f "$YAY_PACKAGE" "$YAY_PACMAN_CONFIG"
