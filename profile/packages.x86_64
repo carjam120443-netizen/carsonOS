@@ -70,10 +70,8 @@ mousepad
 ristretto
 xfce4-screenshooter
 
-# AUR helper and Chaotic-AUR repository support
-yay
-chaotic-keyring
-chaotic-mirrorlist
+# Useful editor and basic tools
+nano
 
 # Browser, fonts, and audio
 firefox
