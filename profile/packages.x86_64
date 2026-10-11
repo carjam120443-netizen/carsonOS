@@ -40,11 +40,14 @@ xorg-server
 xorg-xinit
 xfce4
 xfce4-goodies
+xfce4-terminal
 lightdm
 lightdm-gtk-greeter
 xfce4-notifyd
 xfce4-power-manager
 xfce4-pulseaudio-plugin
+gnome-themes-extra
+adwaita-icon-theme
 xdg-user-dirs
 xdg-utils
 gvfs
