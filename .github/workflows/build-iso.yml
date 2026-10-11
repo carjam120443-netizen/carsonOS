@@ -50,17 +50,9 @@ jobs:
               test -n "$PACMAN_KEY"
               test -x "$PACMAN_KEY"
               "$PACMAN_KEY" --version
-              # Bootstrap Chaotic-AUR in the build container so archiso can
-              # resolve yay and the repository support packages from the profile.
-              # The disposable Arch container may not have a pacman keyring yet.
-              # Initialize it before importing and locally trusting Chaotic-AUR's key.
-              "$PACMAN_KEY" --init
-              "$PACMAN_KEY" --populate archlinux
-              "$PACMAN_KEY" --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-              "$PACMAN_KEY" --lsign-key 3056513887B78AEB
-              pacman -U --noconfirm \
-                https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst \
-                https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst
+              # Keep a copy of the unmodified ISO-build pacman configuration in the workflow artifact.
+              mkdir -p out
+              cp profile/pacman.conf out/pacman.conf.original
               bash scripts/build-iso.sh
             '
 
@@ -69,5 +61,13 @@ jobs:
         with:
           name: carsonos-live-iso
           path: out/*.iso
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload original Pacman configuration backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: carsonos-original-pacman-conf
+          path: out/pacman.conf.original
           if-no-files-found: error
           retention-days: 14
