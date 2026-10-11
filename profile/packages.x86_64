@@ -4,6 +4,7 @@ linux
 linux-firmware
 mkinitcpio
 mkinitcpio-archiso
+pacman-mirrorlist
 syslinux
 efibootmgr
 amd-ucode
