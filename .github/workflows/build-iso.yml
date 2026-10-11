@@ -65,10 +65,3 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Upload original Pacman configuration backup
-        uses: actions/upload-artifact@v4
-        with:
-          name: carsonos-original-pacman-conf
-          path: out/pacman.conf.original
-          if-no-files-found: error
-          retention-days: 14
