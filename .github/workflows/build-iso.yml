@@ -43,19 +43,21 @@ jobs:
             bash -euo pipefail -c '
               pacman -Syu --noconfirm
               pacman -S --needed --noconfirm archiso git pacman-contrib
-              # Keep the standard system directories available in the non-login shell.
-              export PATH="/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
-              # Verify the key-management command exists before bootstrapping Chaotic-AUR.
-              test -x /usr/sbin/pacman-key
-              /usr/sbin/pacman-key --version
+              # pacman-key may live in /usr/bin rather than /usr/sbin on current Arch.
+              # Resolve it from PATH and use that exact executable for all key operations.
+              export PATH="/usr/bin:/usr/sbin:/bin:/sbin:$PATH"
+              PACMAN_KEY="$(command -v pacman-key)"
+              test -n "$PACMAN_KEY"
+              test -x "$PACMAN_KEY"
+              "$PACMAN_KEY" --version
               # Bootstrap Chaotic-AUR in the build container so archiso can
               # resolve yay and the repository support packages from the profile.
               # The disposable Arch container may not have a pacman keyring yet.
               # Initialize it before importing and locally trusting Chaotic-AUR's key.
-              /usr/sbin/pacman-key --init
-              /usr/sbin/pacman-key --populate archlinux
-              /usr/sbin/pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-              /usr/sbin/pacman-key --lsign-key 3056513887B78AEB
+              "$PACMAN_KEY" --init
+              "$PACMAN_KEY" --populate archlinux
+              "$PACMAN_KEY" --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+              "$PACMAN_KEY" --lsign-key 3056513887B78AEB
               pacman -U --noconfirm \
                 https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst \
                 https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst
