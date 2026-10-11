@@ -4,7 +4,7 @@
 
 CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with original Carson branding, a ready-to-use XFCE desktop, and a live ISO that boots on a computer and provides an installation entry point.
 
-> **Project status:** Early development. The profile and configuration are committed, but an ISO must still be built and tested before the project can claim a working release. The current installer entry launches Arch Linux's guided `archinstall` utility; it is not yet a custom graphical installer.
+> **Project status:** Early development. The profile and configuration are committed, but an ISO must still be built and tested before the project can claim a working release. The installer entry launches Arch Linux's guided `archinstall` utility; it is not yet a custom graphical installer.
 
 ## Goals
 
@@ -22,9 +22,11 @@ CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with origin
 | Live image | `archiso` profile in `profile/` |
 | Desktop | XFCE |
 | Display manager | LightDM with automatic login in the live session |
+| Networking | NetworkManager and its XFCE-friendly tray applet |
+| Audio | PipeWire, WirePlumber, PulseAudio compatibility, and volume controls |
 | Init and services | systemd |
 | Package management | pacman and official Arch repositories |
-| Installer entry point | `archinstall` in a terminal |
+| Installer entry point | Desktop icon and application-menu entry launching `archinstall` |
 | Initial testing | VirtualBox, then selected physical test systems |
 
 The live-session account is `liveuser`. Its passwordless sudo rule is intended only for the disposable live environment. Do not copy that rule into an installed system.
@@ -55,8 +57,9 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 1. Create a new VirtualBox VM with a 64-bit Linux profile and a disposable virtual disk.
 2. Attach the generated ISO as the optical drive.
 3. Boot the VM and choose **CarsonOS Live Desktop**.
-4. The intended live session uses XFCE, LightDM, NetworkManager, and the CarsonOS wallpaper and terminal helpers.
-5. Open **Install CarsonOS** to start `archinstall`.
+4. The intended live session uses XFCE, LightDM, NetworkManager, the volume controls, and the CarsonOS wallpaper and terminal helpers.
+5. Use the NetworkManager tray icon to connect to Wi-Fi or inspect wired networking.
+6. Double-click **Install CarsonOS** on the desktop, or find it in the System application menu, to open the guided installer in a terminal.
 
 The installer is the standard Arch guided installer. Review every option and configure the installed system's bootloader, disk layout, user, network, and desktop packages carefully. Installing can erase the selected disk. For early tests, use only a disposable VM disk.
 
@@ -64,6 +67,7 @@ The installer is the standard Arch guided installer. Review every option and con
 
 - `carsonfetch` — basic system and hardware summary.
 - `carson-help` — quick reference for common commands.
+- `carsonos-installer` — starts the guided installer.
 - `update-system` — shell alias for a full `pacman -Syu` system update.
 
 ## Development roadmap
@@ -71,10 +75,13 @@ The installer is the standard Arch guided installer. Review every option and con
 - [x] Add an initial archiso profile for BIOS and UEFI boot.
 - [x] Define the first XFCE desktop package set and live-session defaults.
 - [x] Add original CarsonOS vector wallpaper and terminal helper commands.
+- [x] Add NetworkManager tray controls and PipeWire audio packages.
+- [x] Add a desktop and menu launcher for the guided installer.
 - [ ] Build the ISO successfully on a clean Arch Linux VM.
 - [ ] Test booting in VirtualBox in BIOS and UEFI modes.
 - [ ] Verify networking, sound, display settings, and the installer entry.
 - [ ] Complete fresh-install and reboot testing.
+- [ ] Ensure the installed system receives CarsonOS branding and desktop defaults.
 - [ ] Consider a graphical installer after the first installation path is reliable.
 - [ ] Publish a clearly labelled preview ISO with known issues and installation notes.
 
