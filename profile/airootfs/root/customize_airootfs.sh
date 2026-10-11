@@ -32,7 +32,15 @@ PACMAN_KEY="$(command -v pacman-key)"
 pacman -U --noconfirm \
   https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst \
   https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst
-if ! grep -q '^\\[chaotic-aur\\]
+if ! grep -Fqx '[chaotic-aur]' /etc/pacman.conf; then
+  printf '\n%s\n%s\n' '# CarsonOS optional Chaotic-AUR repository' '[chaotic-aur]' >> /etc/pacman.conf
+  printf '%s\n' 'Include = /etc/pacman.d/chaotic-mirrorlist' >> /etc/pacman.conf
+fi
+pacman -Syu --noconfirm
+echo "Chaotic-AUR enabled; original config backup is in /etc/pacman.d/carsonos-repo-backup"
+CHAOTIC
+chmod 0755 /usr/local/bin/enable-chaotic-aur
+
 # This script is run by the live image's first-boot customization service.
 if ! id liveuser >/dev/null 2>&1; then
   useradd --create-home --shell /bin/bash --groups wheel,audio,video,storage,optical,power liveuser
