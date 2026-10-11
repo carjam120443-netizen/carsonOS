@@ -1,7 +1,7 @@
 # CarsonOS
 
 **A custom Arch Linux-based desktop operating system.**
-<img src="https://www.svgrepo.com/show/349296/arch-linux.svg" >
+<img src="https://www.svgrepo.com/show/349296/arch-linux.svg" alt="Arch Linux logo" width="40" height="40" align="right" />
 
 CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with original Carson branding, a ready-to-use XFCE desktop, and a live ISO that boots on a computer and provides an installation entry point.
 
