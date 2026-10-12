@@ -2,11 +2,11 @@
 
 ## Current approach
 
-The live image includes a first Calamares graphical installer configuration. The **Install CarsonOS** desktop icon and System application-menu entry run `carsonos-installer`, which launches Calamares through PolicyKit when available and falls back to the Arch `archinstall` guided installer if Calamares cannot be launched.
+The live image currently uses the Arch `archinstall` guided installer. The **Install CarsonOS** desktop icon and System application-menu entry run `carsonos-installer`, which launches `archinstall` in the live session.
 
 The live desktop is configured around XFCE, LightDM, NetworkManager, a tray applet for network controls, PipeWire/WirePlumber audio, volume controls, a dark CarsonOS terminal palette, and the original CarsonOS wallpaper.
 
-Calamares is configured to extract the live root filesystem, create the requested user, and use GRUB as the installed system's bootloader. The CarsonOS wallpaper is converted to PNG for GRUB and configured as the installed system's GRUB background. This is an early integration and has not yet been verified in a fresh ISO build; the live image is not yet declared a reliable installer.
+Calamares is not bundled because it is not available from the enabled official Arch repositories. It was removed from the package list so ISO builds can proceed. The customization script still prepares the CarsonOS wallpaper as a PNG and sets `GRUB_BACKGROUND` when `/etc/default/grub` exists, but the current `archinstall` path does not automatically apply this configuration to the installed system.
 
 ## Before testing
 
@@ -19,7 +19,7 @@ Calamares is configured to extract the live root filesystem, create the requeste
 
 ## Known limitations
 
-- Calamares source-image extraction, partitioning, and installed-system cleanup still require testing in a freshly built ISO.
+- Calamares is not included in the ISO yet. A separately packaged build and a complete install test are needed before it can be offered.
 - The `archinstall` fallback relies on the version bundled in the live image; it is normally recommended for use from the official Arch Linux ISO.
 - GRUB is configured for the installed system; the ISO's own boot menu still uses the existing archiso BIOS/UEFI boot modes.
 - The ISO profile has not been declared working until it has been built and tested.
