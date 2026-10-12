@@ -26,7 +26,8 @@ CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with origin
 | Networking | NetworkManager and its XFCE-friendly tray applet |
 | Audio | PipeWire, WirePlumber, PulseAudio compatibility, and volume controls |
 | Init and services | systemd |
-| Installed-system bootloader | GRUB is configured as the Calamares default; BIOS/UEFI install paths still need testing |\n| Package management | pacman, official Arch repositories, and `yay` built from its AUR PKGBUILD |
+| Installed-system bootloader | GRUB is configured as the Calamares default; BIOS/UEFI install paths still need testing |
+| Package management | pacman, official Arch repositories, and `yay` built from its AUR PKGBUILD |
 | System information | `fastfetch` with a custom CarsonOS ASCII logo, shown when a terminal opens |
 | Optional desktops | Hyprland and Cinnamon install shortcuts; XFCE remains the default |
 | Installer | Calamares graphical installer, with `archinstall` fallback |
@@ -67,7 +68,7 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 8. Double-click **Install Cinnamon** to install the optional Cinnamon desktop. Then log out and select **Cinnamon** from the LightDM session menu. XFCE remains the default.
 9. Double-click **Install CarsonOS** on the desktop to open Calamares. The current configuration uses the live image as its installation source, configures GRUB for the installed system, and applies the CarsonOS wallpaper as a GRUB background. This is an early integration: test only on a disposable VM disk until a fresh build and install have been verified. If Calamares cannot launch, `archinstall` remains the fallback.
 
-The installer is the standard Arch guided installer. Review every option and configure the installed system's bootloader, disk layout, user, network, and desktop packages carefully. Installing can erase the selected disk. For early tests, use only a disposable VM disk.
+Calamares is an early integration and has not yet been validated end-to-end. Review every partition and bootloader choice carefully; installation can erase the selected disk. Test only with a disposable VM disk until the new ISO has been fully verified.
 
 ## Included CarsonOS tools
 
