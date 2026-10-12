@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Install Cinnamon (Optional)
+Comment=Install the optional Cinnamon desktop environment
+Exec=xfce4-terminal --hold --title=CarsonOS-Cinnamon --command=carsonos-cinnamon
+Icon=preferences-desktop
+Terminal=false
+Categories=System;Settings;
+StartupNotify=true
