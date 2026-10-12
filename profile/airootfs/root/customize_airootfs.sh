@@ -100,6 +100,7 @@ CarsonOS quick help
   fastfetch         Show system information with the CarsonOS ASCII logo
   yay               Search and install packages from official repos and the AUR
   carsonos-hyprland Install the optional Hyprland desktop
+  carsonos-cinnamon Install the optional Cinnamon desktop
   carson-help       Show this help
   update-system     Update packages with pacman
   carsonos-installer Start the guided Arch installation assistant
@@ -170,6 +171,7 @@ EOF
 install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
 install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
 install -m 0644 /usr/share/applications/carsonos-hyprland.desktop /home/liveuser/Desktop/Install\ Hyprland.desktop
+install -m 0644 /usr/share/applications/carsonos-cinnamon.desktop /home/liveuser/Desktop/Install\ Cinnamon.desktop
 chmod 0755 /usr/local/bin/carsonos-hyprland
 chown -R liveuser:liveuser /home/liveuser/Desktop
 cp /etc/skel/.bashrc /home/liveuser/.bashrc
