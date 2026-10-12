@@ -208,8 +208,8 @@ pacman --config "$YAY_PACMAN_CONFIG" -U --noconfirm "$YAY_PACKAGE"
 rm -f "$YAY_PACKAGE" "$YAY_PACMAN_CONFIG"
 
 
-# Configure Calamares as CarsonOS's graphical installer.
-# Convert the existing CarsonOS wallpaper to a GRUB-supported PNG.
+# Convert the existing CarsonOS wallpaper to a GRUB-supported PNG and
+# configure it for the installed system's GRUB menu.
 if command -v rsvg-convert >/dev/null 2>&1 && [[ -f /usr/share/backgrounds/carsonos/default.svg ]]; then
   rsvg-convert -o /usr/share/backgrounds/carsonos/default.png /usr/share/backgrounds/carsonos/default.svg
 fi
@@ -218,125 +218,30 @@ if [[ -f /etc/default/grub ]]; then
   printf '%s\n' 'GRUB_BACKGROUND="/usr/share/backgrounds/carsonos/default.png"' >> /etc/default/grub
 fi
 
-install -d -m 0755 /etc/calamares/modules /etc/calamares/branding/carsonos
-cat > /etc/calamares/settings.conf <<'CALAMARES_SETTINGS'
-modules-search: [ local, /usr/lib/calamares/modules ]
-sequence:
-  - show:
-      - welcome
-      - locale
-      - keyboard
-      - partition
-      - users
-      - summary
-      - finished
-      - restart
-  - exec:
-      - partition
-      - mount
-      - unpackfs
-      - machineid
-      - fstab
-      - locale
-      - keyboard
-      - localecfg
-      - users
-      - displaymanager
-      - networkcfg
-      - hwclock
-      - services
-      - shellprocess
-      - bootloader
-      - initramfs
-      - grubcfg
-      - umount
-branding: carsonos
-CALAMARES_SETTINGS
-
-cat > /etc/calamares/modules/unpackfs.conf <<'CALAMARES_UNPACK'
-unpack:
-  - source: "/run/archiso/bootmnt/arch/x86_64/airootfs.sfs"
-    sourcefs: "squashfs"
-    destination: ""
-CALAMARES_UNPACK
-
-cat > /etc/calamares/modules/bootloader.conf <<'CALAMARES_BOOTLOADER'
-efiBootLoader: "grub"
-grubInstall: true
-grubMkconfig: true
-CALAMARES_BOOTLOADER
-
-cat > /etc/calamares/modules/shellprocess.conf <<'CALAMARES_SHELLPROCESS'
-dontChroot: false
-timeout: 60
-script: "/usr/local/bin/carsonos-calamares-finalize.sh"
-CALAMARES_SHELLPROCESS
-
-cat > /etc/calamares/branding/carsonos/branding.desc <<'CALAMARES_BRANDING'
-componentName: CarsonOS
-welcomeStyle: sidebar
-strings:
-  productName: CarsonOS
-  shortProductName: CarsonOS
-  version: rolling
-  shortVersion: rolling
-  bootloaderEntryName: CarsonOS
-  productUrl: https://github.com/carjam120443-netizen/carsonOS
-  supportUrl: https://github.com/carjam120443-netizen/carsonOS/issues
-images:
-  productLogo: carsonos.svg
-CALAMARES_BRANDING
-
-cat > /etc/calamares/branding/carsonos/carsonos.svg <<'CALAMARES_LOGO'
-<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
-  <rect x="8" y="8" width="64" height="64" rx="8" fill="#4cff91"/>
-  <rect x="88" y="8" width="64" height="64" rx="8" fill="#35b8ff"/>
-  <rect x="8" y="88" width="64" height="64" rx="8" fill="#35b8ff"/>
-  <rect x="88" y="88" width="64" height="64" rx="8" fill="#4cff91"/>
-</svg>
-CALAMARES_LOGO
-
-# Remove live-session privilege escalation and autologin from the installed copy.
-cat > /usr/local/bin/carsonos-calamares-finalize.sh <<'CALAMARES_FINALIZE'
-#!/usr/bin/env bash
-set -euo pipefail
-passwd -l liveuser 2>/dev/null || true
-gpasswd -d liveuser wheel 2>/dev/null || true
-rm -f /etc/sudoers.d/10-carsonos-live
-if [[ -f /etc/lightdm/lightdm.conf.d/50-carsonos.conf ]]; then
-  sed -i '/^autologin-user=/d; /^autologin-user-timeout=/d' /etc/lightdm/lightdm.conf.d/50-carsonos.conf
-fi
-sed -i 's/^NAME="CarsonOS Live"$/NAME="CarsonOS"/; s/^PRETTY_NAME="CarsonOS Live"$/PRETTY_NAME="CarsonOS"/' /etc/os-release
-printf '%s\n' 'carsonos' > /etc/hostname
-CALAMARES_FINALIZE
-chmod 0755 /usr/local/bin/carsonos-calamares-finalize.sh
-
-# Prefer Calamares, but keep the guided installer available as a fallback.
+# Calamares is not available from the enabled official Arch repositories.
+# Keep the installer entry reliable by launching archinstall for now.
 cat > /usr/local/bin/carsonos-installer <<'CARSONOS_INSTALLER'
 #!/usr/bin/env bash
 set -euo pipefail
-if command -v calamares >/dev/null 2>&1 && command -v pkexec >/dev/null 2>&1; then
-  exec pkexec calamares
+if ! command -v archinstall >/dev/null 2>&1; then
+  echo "archinstall is not installed; check the CarsonOS package list." >&2
+  exit 1
 fi
-if command -v archinstall >/dev/null 2>&1; then
-  exec xfce4-terminal --title="CarsonOS Installer" --command="sudo archinstall"
-fi
-echo "No graphical or guided installer is available." >&2
-exit 1
+exec sudo archinstall
 CARSONOS_INSTALLER
 chmod 0755 /usr/local/bin/carsonos-installer
 
-cat > /usr/share/applications/carsonos-installer.desktop <<'CALAMARES_DESKTOP'
+cat > /usr/share/applications/carsonos-installer.desktop <<'CARSONOS_DESKTOP'
 [Desktop Entry]
 Type=Application
 Name=Install CarsonOS
-Comment=Install CarsonOS with the Calamares graphical installer
+Comment=Install CarsonOS using the guided Arch installer
 Exec=carsonos-installer
 Icon=system-software-install
-Terminal=false
+Terminal=true
 Categories=System;
 StartupNotify=true
-CALAMARES_DESKTOP
-install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
-install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
-chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
+CARSONOS_DESKTOP
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\\ CarsonOS.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Install\\ CarsonOS.desktop
