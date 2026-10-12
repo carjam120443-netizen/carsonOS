@@ -28,7 +28,7 @@ CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with origin
 | Init and services | systemd |
 | Package management | pacman, official Arch repositories, and `yay` built from its AUR PKGBUILD |
 | System information | `fastfetch` with a custom CarsonOS ASCII logo, shown when a terminal opens |
-| Optional desktop | Hyprland install shortcut; XFCE remains the default |
+| Optional desktops | Hyprland and Cinnamon install shortcuts; XFCE remains the default |
 | Installer entry point | Desktop icon and application-menu entry launching `archinstall` |
 | Initial testing | VirtualBox, then selected physical test systems |
 
@@ -74,7 +74,7 @@ The installer is the standard Arch guided installer. Review every option and con
 - `yay` — AUR helper built during the ISO customization step. AUR packages are community-maintained; review PKGBUILDs before installing packages.
 - `carsonfetch` — basic system and hardware summary.
 - `carson-help` — quick reference for common commands.
-- `carsonos-hyprland` — installs Hyprland and its supporting Wayland tools on demand.
+- `carsonos-hyprland` — installs Hyprland and its supporting Wayland tools on demand.\n- `carsonos-cinnamon` — installs the optional Cinnamon desktop and its desktop utilities on demand.
 - `carsonos-installer` — starts the guided installer.
 - `update-system` — shell alias for a full `pacman -Syu` system update.
 
