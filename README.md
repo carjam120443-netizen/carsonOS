@@ -64,7 +64,8 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 5. Use the NetworkManager tray icon to connect to Wi-Fi or inspect wired networking.
 6. Fastfetch displays the custom CarsonOS ASCII logo when you open a terminal.
 7. Double-click **Install Hyprland** to install the optional Hyprland/Wayland desktop in the live session. Then log out and select **Hyprland** from the LightDM session menu. XFCE remains the default.
-8. Double-click **Install CarsonOS** on the desktop, or find it in the System application menu, to open the guided installer in a terminal.
+8. Double-click **Install Cinnamon** to install the optional Cinnamon desktop. Then log out and select **Cinnamon** from the LightDM session menu. XFCE remains the default.
+9. Double-click **Install CarsonOS** on the desktop, or find it in the System application menu, to open the guided installer in a terminal.
 
 The installer is the standard Arch guided installer. Review every option and configure the installed system's bootloader, disk layout, user, network, and desktop packages carefully. Installing can erase the selected disk. For early tests, use only a disposable VM disk.
 
@@ -74,7 +75,8 @@ The installer is the standard Arch guided installer. Review every option and con
 - `yay` — AUR helper built during the ISO customization step. AUR packages are community-maintained; review PKGBUILDs before installing packages.
 - `carsonfetch` — basic system and hardware summary.
 - `carson-help` — quick reference for common commands.
-- `carsonos-hyprland` — installs Hyprland and its supporting Wayland tools on demand.\n- `carsonos-cinnamon` — installs the optional Cinnamon desktop and its desktop utilities on demand.
+- `carsonos-hyprland` — installs Hyprland and its supporting Wayland tools on demand.
+- `carsonos-cinnamon` — installs the optional Cinnamon desktop and its desktop utilities on demand.
 - `carsonos-installer` — starts the guided installer.
 - `update-system` — shell alias for a full `pacman -Syu` system update.
 
