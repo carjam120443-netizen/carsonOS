@@ -5,9 +5,13 @@
     <value type="int" value="1"/>
   </property>
   <property name="panel-1" type="empty">
-    <property name="position" type="string" value="p=8;x=960;y=1040"/>
+    <property name="position" type="string" value="p=12;x=0;y=0"/>
     <property name="length" type="uint" value="100"/>
     <property name="position-locked" type="bool" value="true"/>
+    <property name="mode" type="uint" value="0"/>
+    <property name="nrows" type="uint" value="1"/>
+    <property name="length-adjust" type="bool" value="false"/>
+    <property name="span-monitors" type="bool" value="false"/>
     <property name="size" type="uint" value="36"/>
     <property name="icon-size" type="uint" value="24"/>
     <property name="background-style" type="uint" value="0"/>
@@ -26,6 +30,7 @@
     <property name="plugin-1" type="string" value="applicationsmenu"/>
     <property name="plugin-2" type="string" value="tasklist"/>
     <property name="plugin-3" type="string" value="separator">
+      <property name="expand" type="bool" value="true"/>
       <property name="style" type="uint" value="0"/>
     </property>
     <property name="plugin-4" type="string" value="systray"/>
