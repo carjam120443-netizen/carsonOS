@@ -99,7 +99,6 @@ gptfdisk
 squashfs-tools
 
 # Graphical installer and GRUB support
-calamares
 grub
 efibootmgr
 librsvg
