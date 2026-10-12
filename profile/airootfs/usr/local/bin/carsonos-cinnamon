@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $EUID -ne 0 ]]; then
+  exec sudo /usr/local/bin/carsonos-cinnamon "$@"
+fi
+
+echo "Installing the optional CarsonOS Cinnamon desktop..."
+pacman -Syu --needed --noconfirm \
+  cinnamon \
+  cinnamon-desktop \
+  cinnamon-translations \
+  nemo \
+  gnome-terminal
+
+# Turn off LightDM autologin so the user can select Cinnamon at the login screen.
+LIGHTDM_CONF=/etc/lightdm/lightdm.conf.d/50-carsonos.conf
+if [[ -f "$LIGHTDM_CONF" ]]; then
+  sed -i -e '/^autologin-user=/d' -e '/^autologin-user-timeout=/d' "$LIGHTDM_CONF"
+fi
+
+echo
+echo "Cinnamon is installed for this live session."
+echo "Log out, choose Cinnamon from the LightDM session menu, and log in again."
+echo "XFCE remains the default desktop in CarsonOS."
+echo "Note: live-session package changes are temporary and reset when you reboot."
