@@ -242,6 +242,6 @@ Terminal=true
 Categories=System;
 StartupNotify=true
 CARSONOS_DESKTOP
-install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\\ CarsonOS.desktop
-install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\\ CarsonOS.desktop
-chown liveuser:liveuser /home/liveuser/Desktop/Install\\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
