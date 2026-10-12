@@ -5,7 +5,7 @@
 
 CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with original Carson branding, a ready-to-use XFCE desktop, and a live ISO that boots on a computer and provides an installation entry point.
 
-> **Project status:** Early development. The ISO builds in GitHub Actions and has booted to the CarsonOS XFCE live desktop in VirtualBox. Network/package installation and the optional Hyprland path are still being tested. The installer entry launches Arch Linux's guided `archinstall` utility; it is not yet a custom graphical installer.
+> **Project status:** Early development. The ISO builds in GitHub Actions and has booted to the CarsonOS XFCE live desktop in VirtualBox. Network/package installation and the optional Hyprland path are still being tested. A first Calamares graphical installer configuration is now included, with `archinstall` retained as a fallback. The Calamares path still needs a fresh ISO build and full install test.
 
 ## Goals
 
@@ -26,10 +26,10 @@ CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with origin
 | Networking | NetworkManager and its XFCE-friendly tray applet |
 | Audio | PipeWire, WirePlumber, PulseAudio compatibility, and volume controls |
 | Init and services | systemd |
-| Package management | pacman, official Arch repositories, and `yay` built from its AUR PKGBUILD |
+| Installed-system bootloader | GRUB is configured as the Calamares default; BIOS/UEFI install paths still need testing |\n| Package management | pacman, official Arch repositories, and `yay` built from its AUR PKGBUILD |
 | System information | `fastfetch` with a custom CarsonOS ASCII logo, shown when a terminal opens |
 | Optional desktops | Hyprland and Cinnamon install shortcuts; XFCE remains the default |
-| Installer entry point | Desktop icon and application-menu entry launching `archinstall` |
+| Installer | Calamares graphical installer, with `archinstall` fallback |
 | Initial testing | VirtualBox, then selected physical test systems |
 
 The live-session account is `liveuser`. Its passwordless sudo rule is intended only for the disposable live environment. Do not copy that rule into an installed system.
@@ -65,7 +65,7 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 6. Fastfetch displays the custom CarsonOS ASCII logo when you open a terminal.
 7. Double-click **Install Hyprland** to install the optional Hyprland/Wayland desktop in the live session. Then log out and select **Hyprland** from the LightDM session menu. XFCE remains the default.
 8. Double-click **Install Cinnamon** to install the optional Cinnamon desktop. Then log out and select **Cinnamon** from the LightDM session menu. XFCE remains the default.
-9. Double-click **Install CarsonOS** on the desktop, or find it in the System application menu, to open the guided installer in a terminal.
+9. Double-click **Install CarsonOS** on the desktop to open Calamares. The current configuration uses the live image as its installation source, configures GRUB for the installed system, and applies the CarsonOS wallpaper as a GRUB background. This is an early integration: test only on a disposable VM disk until a fresh build and install have been verified. If Calamares cannot launch, `archinstall` remains the fallback.
 
 The installer is the standard Arch guided installer. Review every option and configure the installed system's bootloader, disk layout, user, network, and desktop packages carefully. Installing can erase the selected disk. For early tests, use only a disposable VM disk.
 
@@ -86,14 +86,14 @@ The installer is the standard Arch guided installer. Review every option and con
 - [x] Define the first XFCE desktop package set and live-session defaults.
 - [x] Add original CarsonOS vector wallpaper and terminal helper commands.
 - [x] Add NetworkManager tray controls and PipeWire audio packages.
-- [x] Add a desktop and menu launcher for the guided installer.
+- [x] Add a desktop and menu launcher for Calamares with an `archinstall` fallback.
 - [x] Build the ISO successfully in GitHub Actions.
 - [x] Boot the live desktop in VirtualBox and verify the CarsonOS wallpaper.
 - [ ] Test booting in both BIOS and UEFI modes.
 - [ ] Verify networking, sound, display settings, and the installer entry.
 - [ ] Complete fresh-install and reboot testing.
 - [ ] Ensure the installed system receives CarsonOS branding and desktop defaults.
-- [ ] Consider a graphical installer after the first installation path is reliable.
+- [ ] Validate Calamares source-image extraction, partitioning, GRUB on BIOS and UEFI, and installed-system cleanup.
 - [ ] Publish a clearly labelled preview ISO with known issues and installation notes.
 
 ## Updates and maintenance
