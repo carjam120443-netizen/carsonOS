@@ -73,6 +73,8 @@ cat > /etc/lightdm/lightdm.conf.d/50-carsonos.conf <<'EOF'
 greeter-session=lightdm-gtk-greeter
 autologin-user=liveuser
 autologin-user-timeout=0
+autologin-session=cinnamon
+user-session=cinnamon
 EOF
 
 # Keep the live user's shell helpful without overwriting the distro defaults.
