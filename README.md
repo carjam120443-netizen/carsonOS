@@ -26,7 +26,7 @@ CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with origin
 | Networking | NetworkManager and its XFCE-friendly tray applet |
 | Audio | PipeWire, WirePlumber, PulseAudio compatibility, and volume controls |
 | Init and services | systemd |
-| Installed-system bootloader | GRUB is configured as the Calamares default; BIOS/UEFI install paths still need testing |
+| Bootloader | systemd-boot for UEFI (the maintained successor to gummiboot); Syslinux for BIOS |
 | Package management | pacman, official Arch repositories, and `yay` built from its AUR PKGBUILD |
 | System information | `fastfetch` with a custom CarsonOS ASCII logo, shown when a terminal opens |
 | Optional desktops | Hyprland and Cinnamon install shortcuts; XFCE remains the default |
@@ -66,7 +66,7 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 6. Fastfetch displays the custom CarsonOS ASCII logo when you open a terminal.
 7. Double-click **Install Hyprland** to install the optional Hyprland/Wayland desktop in the live session. Then log out and select **Hyprland** from the LightDM session menu. XFCE remains the default.
 8. Double-click **Install Cinnamon** to install the optional Cinnamon desktop. Then log out and select **Cinnamon** from the LightDM session menu. XFCE remains the default.
-9. Double-click **Install CarsonOS** to open the Arch `archinstall` guided installer in a terminal. Calamares is not available in the enabled official Arch repositories, so it has been removed from the ISO package list to restore builds. GRUB and the CarsonOS wallpaper are still configured for a future installed-system boot path, but the current installer does not automatically apply that setup. Installation can erase the selected disk; test only with a disposable VM disk.
+9. Double-click **Install CarsonOS** to open the Arch `archinstall` guided installer in a terminal. Calamares is not available in the enabled official Arch repositories, so it has been removed from the ISO package list to restore builds. For UEFI installations, choose systemd-boot in `archinstall`; it is the maintained continuation of the old gummiboot project. CarsonOS does not force a boot-menu wallpaper, keeping the bootloader simple. Installation can erase the selected disk; test only with a disposable VM disk.
 
 ## Included CarsonOS tools
 
@@ -92,7 +92,7 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 - [ ] Verify networking, sound, display settings, and the installer entry.
 - [ ] Complete fresh-install and reboot testing.
 - [ ] Ensure the installed system receives CarsonOS branding and desktop defaults.
-- [ ] Package Calamares separately (it is not in the enabled official Arch repositories), then validate installation and GRUB on BIOS and UEFI.
+- [ ] Package Calamares separately (it is not in the enabled official Arch repositories), then validate installation and systemd-boot on UEFI plus Syslinux on BIOS.
 - [ ] Publish a clearly labelled preview ISO with known issues and installation notes.
 
 ## Updates and maintenance
