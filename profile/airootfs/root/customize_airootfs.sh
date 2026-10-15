@@ -212,6 +212,18 @@ for staged_file in "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMAR
   fi
 done
 
+# The live root can have an uninitialized or incorrectly permissioned
+# pacman keyring at this point in mkarchiso's chroot customization stage.
+# Repair its ownership/mode, initialize it, and import the official Arch keys
+# before asking pacman to verify/install Calamares runtime dependencies.
+install -d -m 0755 /etc/pacman.d
+if [[ -e /etc/pacman.d/gnupg ]]; then
+  chown -R root:root /etc/pacman.d/gnupg
+  chmod 0700 /etc/pacman.d/gnupg
+fi
+pacman-key --init
+pacman-key --populate archlinux
+
 # CheckSpace cannot identify the target mount while mkarchiso runs this
 # customization in a chroot. Remove only that option for this transaction.
 AUR_PACMAN_CONFIG="$(mktemp /tmp/carsonos-pacman-aur.XXXXXX.conf)"
