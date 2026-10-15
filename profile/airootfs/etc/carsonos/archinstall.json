@@ -1,0 +1,43 @@
+{
+  "archinstall_language": "English",
+  "network_config": {
+    "type": "nm"
+  },
+  "packages": [
+    "networkmanager",
+    "network-manager-applet",
+    "cinnamon",
+    "cinnamon-translations",
+    "nemo",
+    "xorg-server",
+    "lightdm",
+    "lightdm-gtk-greeter",
+    "pipewire",
+    "pipewire-pulse",
+    "wireplumber",
+    "polkit-gnome",
+    "xdg-user-dirs",
+    "xdg-utils",
+    "gvfs",
+    "firefox",
+    "fastfetch"
+  ],
+  "services": [
+    "NetworkManager.service",
+    "systemd-timesyncd.service"
+  ],
+  "profile_config": {
+    "gfx_driver": "All open-source",
+    "greeter": "lightdm-gtk-greeter",
+    "profile": {
+      "main": "Desktop",
+      "details": ["Cinnamon"]
+    }
+  },
+  "custom_commands": [
+    "install -d -m 0755 /etc/lightdm/lightdm.conf.d && printf '[Seat:*]\\nuser-session=cinnamon\\ngreeter-session=lightdm-gtk-greeter\\n' > /etc/lightdm/lightdm.conf.d/50-carsonos.conf",
+    "systemctl enable NetworkManager.service lightdm.service systemd-timesyncd.service",
+    "systemctl set-default graphical.target"
+  ],
+  "ntp": true
+}
