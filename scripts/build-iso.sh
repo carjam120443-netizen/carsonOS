@@ -28,6 +28,9 @@ AUR_BUILD_USER="carsonos-aur-${BASHPID}"
 AUR_BUILD_DIR=""
 YAY_STAGE_PACKAGE="$PROFILE/airootfs/root/yay.pkg.tar.zst"
 PARU_STAGE_PACKAGE="$PROFILE/airootfs/root/paru.pkg.tar.zst"
+CALAMARES_STAGE_PACKAGE="$PROFILE/airootfs/root/calamares.pkg.tar.zst"
+CALAMARES_DEPS_STAGE="$PROFILE/airootfs/root/calamares-runtime-deps.txt"
+AUR_SUDOERS="/etc/sudoers.d/${AUR_BUILD_USER}"
 
 cleanup_yay_build() {
   if id "$AUR_BUILD_USER" >/dev/null 2>&1; then
@@ -36,17 +39,21 @@ cleanup_yay_build() {
   if [[ -n "$AUR_BUILD_DIR" && -d "$AUR_BUILD_DIR" ]]; then
     rm -rf "$AUR_BUILD_DIR"
   fi
-  rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE"
+  rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$CALAMARES_STAGE_PACKAGE" "$CALAMARES_DEPS_STAGE" "$CALAMARES_STAGE_PACKAGE" "$CALAMARES_DEPS_STAGE"
+  rm -f "$AUR_SUDOERS"
 }
 trap cleanup_yay_build EXIT
 rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE"
 
 # These dependencies are installed only in the disposable/building system.
-pacman -S --needed --noconfirm base-devel go git rust
+pacman -S --needed --noconfirm base-devel go git rust sudo
 
 AUR_BUILD_DIR="$(mktemp -d /tmp/carsonos-yay-build.XXXXXX)"
 chmod 0755 "$AUR_BUILD_DIR"
 useradd --create-home --shell /bin/bash "$AUR_BUILD_USER"
+printf '%s\n' "$AUR_BUILD_USER ALL=(root) NOPASSWD: /usr/bin/pacman" > "$AUR_SUDOERS"
+chmod 0440 "$AUR_SUDOERS"
+visudo -cf "$AUR_SUDOERS"
 install -d -m 0755 -o "$AUR_BUILD_USER" -g "$AUR_BUILD_USER" "$AUR_BUILD_DIR/src"
 runuser -u "$AUR_BUILD_USER" -- git clone --depth 1 https://aur.archlinux.org/yay.git "$AUR_BUILD_DIR/src/yay"
 runuser -u "$AUR_BUILD_USER" -- bash -c "cd \"$AUR_BUILD_DIR/src/yay\" && makepkg --noconfirm"
@@ -65,7 +72,16 @@ if [[ -z "$PARU_PACKAGE" ]]; then
   exit 1
 fi
 install -m 0644 "$PARU_PACKAGE" "$PARU_STAGE_PACKAGE"
-echo "Staged yay and Paru packages for the CarsonOS live image."
+runuser -u "$AUR_BUILD_USER" -- git clone --depth 1 https://aur.archlinux.org/calamares.git "$AUR_BUILD_DIR/src/calamares"
+runuser -u "$AUR_BUILD_USER" -- bash -c "cd \"$AUR_BUILD_DIR/src/calamares\" && makepkg --syncdeps --noconfirm"
+CALAMARES_PACKAGE="$(find "$AUR_BUILD_DIR/src/calamares" -maxdepth 1 -type f -name "calamares-[0-9]*-*.pkg.tar.zst" -print -quit)"
+if [[ -z "$CALAMARES_PACKAGE" ]]; then
+  echo "Failed to build Calamares: package archive not found." >&2
+  exit 1
+fi
+install -m 0644 "$CALAMARES_PACKAGE" "$CALAMARES_STAGE_PACKAGE"
+bsdtar -xOf "$CALAMARES_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$CALAMARES_DEPS_STAGE"
+echo "Staged yay, Paru, and Calamares packages for the CarsonOS live image."
 
 mkarchiso -v -w "$WORK" -o "$OUT" "$PROFILE"
 printf '\nBuild finished. Check ISO output in: %s\n' "$OUT"
