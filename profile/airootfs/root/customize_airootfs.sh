@@ -190,6 +190,7 @@ chown -R liveuser:liveuser /home/liveuser/.config/fastfetch /home/liveuser/.conf
 
 # NetworkManager starts for Ethernet and Wi-Fi; the applet exposes Wi-Fi controls.
 # PipeWire's user sockets provide audio and PulseAudio compatibility.
+dconf update
 systemctl enable NetworkManager.service
 systemctl enable lightdm.service
 systemctl enable systemd-timesyncd.service
