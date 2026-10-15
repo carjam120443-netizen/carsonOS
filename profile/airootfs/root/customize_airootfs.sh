@@ -139,14 +139,18 @@ fi
 EOF
 chmod 0755 /usr/local/bin/carsonfetch
 
+# Temporary launcher; the final Calamares-first launcher is installed below.
 cat > /usr/local/bin/carsonos-installer <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
-if ! command -v archinstall >/dev/null 2>&1; then
-  xfce4-terminal --title="CarsonOS Installer" --command="bash -lc 'echo CarsonOS installer is missing; check the ISO package list; read -r -p "Press Enter to close..."'" 
+if command -v calamares >/dev/null 2>&1; then
+  exec sudo calamares
+elif command -v archinstall >/dev/null 2>&1; then
+  exec sudo archinstall
+else
+  echo "Neither Calamares nor archinstall is installed." >&2
   exit 1
 fi
-exec sudo archinstall
 EOF
 chmod 0755 /usr/local/bin/carsonos-installer
 
