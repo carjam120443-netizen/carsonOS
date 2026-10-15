@@ -6,7 +6,7 @@ The live image currently uses the Arch `archinstall` guided installer. The **Ins
 
 The live desktop is configured around XFCE, LightDM, NetworkManager, a tray applet for network controls, PipeWire/WirePlumber audio, volume controls, a dark CarsonOS terminal palette, and the original CarsonOS wallpaper.
 
-Calamares is not bundled because it is not available from the enabled official Arch repositories. It was removed from the package list so ISO builds can proceed. The customization script still prepares the CarsonOS wallpaper as a PNG and sets `GRUB_BACKGROUND` when `/etc/default/grub` exists, but the current `archinstall` path does not automatically apply this configuration to the installed system.
+Calamares is not bundled because it is not available from the enabled official Arch repositories. It was removed from the package list so ISO builds can proceed. The live ISO uses systemd-boot for UEFI, the maintained successor to gummiboot, and Syslinux for BIOS. The boot menu stays text-based by design; the CarsonOS wallpaper is used on the desktop rather than forced into the bootloader.
 
 ## Before testing
 
@@ -21,7 +21,7 @@ Calamares is not bundled because it is not available from the enabled official A
 
 - Calamares is not included in the ISO yet. A separately packaged build and a complete install test are needed before it can be offered.
 - The `archinstall` fallback relies on the version bundled in the live image; it is normally recommended for use from the official Arch Linux ISO.
-- GRUB is configured for the installed system; the ISO's own boot menu still uses the existing archiso BIOS/UEFI boot modes.
+- For UEFI installs, select systemd-boot in `archinstall` (the maintained successor to gummiboot). The live ISO uses systemd-boot for UEFI and Syslinux for BIOS.
 - The ISO profile has not been declared working until it has been built and tested.
 - Live-session users and settings are not automatically guaranteed to match the installed system.
 - Hardware compatibility varies; test networking, sound, display, suspend, and reboot on each target.
