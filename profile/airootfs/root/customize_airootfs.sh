@@ -194,18 +194,19 @@ systemctl enable systemd-timesyncd.service
 # Install the yay package built by scripts/build-iso.sh in the build environment.
 # The target live root stays free of the Go compiler and base-devel toolchain.
 YAY_PACKAGE="/root/yay.pkg.tar.zst"
-if [[ ! -f "$YAY_PACKAGE" ]]; then
-  echo "Missing staged yay package. Build the ISO with scripts/build-iso.sh." >&2
+PARU_PACKAGE="/root/paru.pkg.tar.zst"
+if [[ ! -f "$YAY_PACKAGE" || ! -f "$PARU_PACKAGE" ]]; then
+  echo "Missing staged yay or Paru package. Build the ISO with scripts/build-iso.sh." >&2
   exit 1
 fi
 
 # CheckSpace cannot determine a mount point for the target root while this
 # customization runs inside mkarchiso's chroot. Disable only that check for
 # this local package transaction; keep all other Pacman settings unchanged.
-YAY_PACMAN_CONFIG="$(mktemp /tmp/carsonos-pacman-yay.XXXXXX.conf)"
-sed '/^[[:space:]]*CheckSpace[[:space:]]*$/d' /etc/pacman.conf > "$YAY_PACMAN_CONFIG"
-pacman --config "$YAY_PACMAN_CONFIG" -U --noconfirm "$YAY_PACKAGE"
-rm -f "$YAY_PACKAGE" "$YAY_PACMAN_CONFIG"
+AUR_PACMAN_CONFIG="$(mktemp /tmp/carsonos-pacman-aur.XXXXXX.conf)"
+sed '/^[[:space:]]*CheckSpace[[:space:]]*$/d' /etc/pacman.conf > "$AUR_PACMAN_CONFIG"
+pacman --config "$AUR_PACMAN_CONFIG" -U --noconfirm "$YAY_PACKAGE" "$PARU_PACKAGE"
+rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$AUR_PACMAN_CONFIG"
 
 
 # Convert the existing CarsonOS wallpaper to a GRUB-supported PNG and
