@@ -241,6 +241,8 @@ pacman --config "$AUR_PACMAN_CONFIG" -U --needed --noconfirm \
 rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$AUR_PACMAN_CONFIG"
 
 # Calamares is the preferred guided installer; archinstall remains a fallback.
+# CarsonOS preset keeps Archinstall's disk/bootloader/user choices interactive,
+# while preselecting a desktop, network manager, and graphical boot target.
 cat > /usr/local/bin/carsonos-installer <<'CARSONOS_INSTALLER'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -248,6 +250,9 @@ if command -v calamares >/dev/null 2>&1; then
   exec sudo calamares
 fi
 if command -v archinstall >/dev/null 2>&1; then
+  if [[ -r /etc/carsonos/archinstall.json ]]; then
+    exec sudo archinstall --config /etc/carsonos/archinstall.json
+  fi
   exec sudo archinstall
 fi
 echo "Neither Calamares nor archinstall is installed." >&2
