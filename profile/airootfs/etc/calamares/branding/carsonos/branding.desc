@@ -3,7 +3,7 @@ componentName: CarsonOS
 welcomeStyle: image
 welcomeExpanding: true
 windowExpanding: normal
-windowSize: 900px,600px
+windowSize: 900,600
 productName: CarsonOS
 shortProductName: CarsonOS
 version: Preview
