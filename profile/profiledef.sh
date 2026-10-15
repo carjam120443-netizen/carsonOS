@@ -7,6 +7,7 @@ iso_application="CarsonOS Live Desktop"
 iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
 install_dir="carsonos"
 buildmodes=('iso')
+# systemd-boot is the maintained successor to gummiboot; keep the live menu simple.
 bootmodes=('bios.syslinux' 'uefi.systemd-boot')
 arch=('x86_64')
 pacman_conf="pacman.conf"
