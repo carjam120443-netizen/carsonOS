@@ -20,10 +20,11 @@ Calamares is built from the AUR as part of the ISO build, so the build needs int
 ## Known limitations
 
 - Calamares is AUR-built and included, but its installation configuration has not yet been verified end-to-end. Treat it as experimental.
-- The `archinstall` fallback relies on the version bundled in the live image; it is normally recommended for use from the official Arch Linux ISO.
-- For UEFI installs, select systemd-boot in `archinstall` (the maintained successor to gummiboot). The live ISO uses systemd-boot for UEFI and Syslinux for BIOS.
-- The ISO profile has not been declared working until it has been built and tested.
-- Live-session users and settings are not automatically guaranteed to match the installed system.
+- The `archinstall` fallback now loads `/etc/carsonos/archinstall.json`. It preselects Cinnamon, LightDM, NetworkManager, and a graphical boot target while leaving disk layout, bootloader, and user choices for the installer to confirm. Review every selection; this preset does not make installation risk-free.
+- The Archinstall preset configures NetworkManager for the installed system and enables the graphical login. It cannot fix a disconnected VirtualBox adapter or an unavailable mirror during installation; the live environment must have working internet for package downloads.
+- For UEFI installs, choose a suitable UEFI bootloader in `archinstall`; the live ISO uses systemd-boot for UEFI and Syslinux for BIOS.
+- The ISO profile and preset still need a fresh build and a complete disposable-VM install test before being considered verified.
+- Live-session users and settings are not automatically copied into the installed system; the preset installs the main desktop/network components separately.
 - Hardware compatibility varies; test networking, sound, display, suspend, and reboot on each target.
 
 ## Build
