@@ -5,7 +5,7 @@
 
 CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with original Carson branding, a ready-to-use Cinnamon desktop, and a live ISO that boots on a computer and provides an installation entry point.
 
-> **Project status:** Early development. The ISO builds in GitHub Actions and has booted to the CarsonOS live desktop in VirtualBox. Network/package installation and the optional Hyprland path are still being tested. A first Calamares graphical installer configuration is now included, with `archinstall` retained as a fallback. The Calamares path still needs a fresh ISO build and full install test.
+> **Project status:** Early development. The ISO builds in GitHub Actions and has booted to the CarsonOS live desktop in VirtualBox. Network/package installation and the optional Hyprland path are still being tested. Calamares is built from the AUR during ISO creation and is the default installer, with `archinstall` retained as a fallback. The installer remains experimental until a fresh ISO is built and a full install is tested.
 
 ## Goals
 
@@ -64,7 +64,7 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 4. The intended live session uses Cinnamon, LightDM, NetworkManager, the volume controls, and the CarsonOS wallpaper and terminal helpers.
 5. Use the NetworkManager tray icon to connect to Wi-Fi or inspect wired networking.
 6. Fastfetch displays the custom CarsonOS ASCII logo when you open a terminal.
-7. Cinnamon is the default desktop and uses the original CarsonOS wallpaper.
+7. Cinnamon is the default desktop and uses the original CarsonOS wallpaper. The desktop shortcut **Cinnamon Desktop** opens the Cinnamon session.
 8. Double-click **Install Hyprland** to install the optional Hyprland/Wayland desktop in the live session. Then log out and select **Hyprland** from the LightDM session menu.
 9. Double-click **Install CarsonOS** to launch Calamares. The installer is built from the AUR during ISO creation and remains experimental until a full install test passes. Test only in a disposable VM; installation can erase data.
 
