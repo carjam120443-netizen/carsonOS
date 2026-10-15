@@ -20,7 +20,10 @@
     "xdg-utils",
     "gvfs",
     "firefox",
-    "fastfetch"
+    "fastfetch",
+    "exfat-utils",
+    "man-pages-utils",
+    "arch-wiki-lite"
   ],
   "services": [
     "NetworkManager.service",
@@ -31,7 +34,9 @@
     "greeter": "lightdm-gtk-greeter",
     "profile": {
       "main": "Desktop",
-      "details": ["Cinnamon"]
+      "details": [
+        "Cinnamon"
+      ]
     }
   },
   "custom_commands": [
