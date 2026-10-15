@@ -99,6 +99,7 @@ CarsonOS quick help
   carsonfetch       Show system information
   fastfetch         Show system information with the CarsonOS ASCII logo
   yay               Search and install packages from official repos and the AUR
+  paru              Alternative AUR helper with pacman-style commands
   carsonos-hyprland Install the optional Hyprland desktop
   carsonos-cinnamon Install the optional Cinnamon desktop
   carson-help       Show this help
