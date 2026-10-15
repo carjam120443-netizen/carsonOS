@@ -38,6 +38,11 @@ vulkan-intel
 xf86-video-amdgpu
 xf86-video-intel
 
+# Default desktop: Cinnamon
+cinnamon
+cinnamon-translations
+nemo
+
 # Desktop and display manager
 xorg-server
 xorg-xinit
