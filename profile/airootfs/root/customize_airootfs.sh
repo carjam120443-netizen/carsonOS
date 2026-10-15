@@ -214,16 +214,18 @@ rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$AUR_PACMAN_CONFIG"
 # to gummiboot) and Syslinux for BIOS. Keep the boot menu text-based;
 # the CarsonOS wallpaper belongs to the desktop, not the boot menu.
 
-# Calamares is not available from the enabled official Arch repositories.
-# Keep the installer entry reliable by launching archinstall for now.
+# Calamares is built from the AUR during ISO creation; archinstall is a fallback.
 cat > /usr/local/bin/carsonos-installer <<'CARSONOS_INSTALLER'
 #!/usr/bin/env bash
 set -euo pipefail
-if ! command -v archinstall >/dev/null 2>&1; then
-  echo "archinstall is not installed; check the CarsonOS package list." >&2
-  exit 1
+if command -v calamares >/dev/null 2>&1; then
+  exec sudo calamares
 fi
-exec sudo archinstall
+if command -v archinstall >/dev/null 2>&1; then
+  exec sudo archinstall
+fi
+echo "Neither Calamares nor archinstall is installed." >&2
+exit 1
 CARSONOS_INSTALLER
 chmod 0755 /usr/local/bin/carsonos-installer
 
