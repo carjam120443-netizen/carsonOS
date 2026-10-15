@@ -42,7 +42,7 @@ trap cleanup_yay_build EXIT
 rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE"
 
 # These dependencies are installed only in the disposable/building system.
-pacman -S --needed --noconfirm base-devel go git
+pacman -S --needed --noconfirm base-devel go git rust
 
 AUR_BUILD_DIR="$(mktemp -d /tmp/carsonos-yay-build.XXXXXX)"
 chmod 0755 "$AUR_BUILD_DIR"
