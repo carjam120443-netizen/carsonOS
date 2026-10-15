@@ -210,15 +210,9 @@ pacman --config "$AUR_PACMAN_CONFIG" -U --noconfirm "$YAY_PACKAGE" "$PARU_PACKAG
 rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$AUR_PACMAN_CONFIG"
 
 
-# Convert the existing CarsonOS wallpaper to a GRUB-supported PNG and
-# configure it for the installed system's GRUB menu.
-if command -v rsvg-convert >/dev/null 2>&1 && [[ -f /usr/share/backgrounds/carsonos/default.svg ]]; then
-  rsvg-convert -o /usr/share/backgrounds/carsonos/default.png /usr/share/backgrounds/carsonos/default.svg
-fi
-if [[ -f /etc/default/grub ]]; then
-  sed -i '/^GRUB_BACKGROUND=/d' /etc/default/grub
-  printf '%s\n' 'GRUB_BACKGROUND="/usr/share/backgrounds/carsonos/default.png"' >> /etc/default/grub
-fi
+# The live ISO uses systemd-boot for UEFI (the maintained successor
+# to gummiboot) and Syslinux for BIOS. Keep the boot menu text-based;
+# the CarsonOS wallpaper belongs to the desktop, not the boot menu.
 
 # Calamares is not available from the enabled official Arch repositories.
 # Keep the installer entry reliable by launching archinstall for now.
