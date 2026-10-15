@@ -98,6 +98,10 @@ alsa-utils
 # Storage, filesystem, and installation tools
 dosfstools
 exfatprogs
+# Extra filesystem support and offline documentation
+exfat-utils
+man-pages-utils
+arch-wiki-lite
 ntfs-3g
 e2fsprogs
 btrfs-progs
