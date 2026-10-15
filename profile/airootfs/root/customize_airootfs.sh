@@ -195,71 +195,36 @@ systemctl enable NetworkManager.service
 systemctl enable lightdm.service
 systemctl enable systemd-timesyncd.service
 
-# Install the yay package built by scripts/build-iso.sh in the build environment.
-# The target live root stays free of the Go compiler and base-devel toolchain.
+# Install AUR packages staged by scripts/build-iso.sh outside the live root.
 YAY_PACKAGE="/root/yay.pkg.tar.zst"
 PARU_PACKAGE="/root/paru.pkg.tar.zst"
 CALAMARES_PACKAGE="/root/calamares.pkg.tar.zst"
 CALAMARES_DEPS="/root/calamares-runtime-deps.txt"
-if [[ ! -f "$YAY_PACKAGE" || ! -f "$PARU_PACKAGE" || ! -f "$CALAMARES_PACKAGE" || ! -f "$CALAMARES_DEPS" ]]; then
-  echo "Missing staged AUR packages. Build the ISO with scripts/build-iso.sh." >&2
-  exit 1
-fi
 
-# CheckSpace cannot determine a mount point for the target root while this
-# customization runs inside mkarchiso's chroot. Disable only that check for
-# this local package transaction; keep all other Pacman settings unchanged.
+for staged_file in "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS"; do
+  if [[ ! -f "$staged_file" ]]; then
+    echo "Missing staged build file: $staged_file. Build the ISO with scripts/build-iso.sh." >&2
+    exit 1
+  fi
+done
+
+# CheckSpace cannot identify the target mount while mkarchiso runs this
+# customization in a chroot. Remove only that option for this transaction.
 AUR_PACMAN_CONFIG="$(mktemp /tmp/carsonos-pacman-aur.XXXXXX.conf)"
 sed '/^[[:space:]]*CheckSpace[[:space:]]*$/d' /etc/pacman.conf > "$AUR_PACMAN_CONFIG"
-mapfile -t CALAMARES_DEPENDENCIES < <(grep -E '^[a-zA-Z0-9@._+-]+
 
-
-# The live ISO uses systemd-boot for UEFI (the maintained successor
-# to gummiboot) and Syslinux for BIOS. Keep the boot menu text-based;
-# the CarsonOS wallpaper belongs to the desktop, not the boot menu.
-
-# Calamares is built from the AUR during ISO creation; archinstall is a fallback.
-cat > /usr/local/bin/carsonos-installer <<'CARSONOS_INSTALLER'
-#!/usr/bin/env bash
-set -euo pipefail
-if command -v calamares >/dev/null 2>&1; then
-  exec sudo calamares
-fi
-if command -v archinstall >/dev/null 2>&1; then
-  exec sudo archinstall
-fi
-echo "Neither Calamares nor archinstall is installed." >&2
-exit 1
-CARSONOS_INSTALLER
-chmod 0755 /usr/local/bin/carsonos-installer
-
-cat > /usr/share/applications/carsonos-installer.desktop <<'CARSONOS_DESKTOP'
-[Desktop Entry]
-Type=Application
-Name=Install CarsonOS
-Comment=Install CarsonOS using the guided Arch installer
-Exec=carsonos-installer
-Icon=system-software-install
-Terminal=true
-Categories=System;
-StartupNotify=true
-CARSONOS_DESKTOP
-install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
-install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
-chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
- "$CALAMARES_DEPS" | sort -u)
+mapfile -t CALAMARES_DEPENDENCIES < <(
+  grep -E '^[a-zA-Z0-9@._+-]+$' "$CALAMARES_DEPS" | sort -u
+)
 if (("${#CALAMARES_DEPENDENCIES[@]}" > 0)); then
   pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${CALAMARES_DEPENDENCIES[@]}"
 fi
-pacman --config "$AUR_PACMAN_CONFIG" -U --noconfirm "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE"
+
+pacman --config "$AUR_PACMAN_CONFIG" -U --needed --noconfirm \
+  "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE"
 rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$AUR_PACMAN_CONFIG"
 
-
-# The live ISO uses systemd-boot for UEFI (the maintained successor
-# to gummiboot) and Syslinux for BIOS. Keep the boot menu text-based;
-# the CarsonOS wallpaper belongs to the desktop, not the boot menu.
-
-# Calamares is built from the AUR during ISO creation; archinstall is a fallback.
+# Calamares is the preferred guided installer; archinstall remains a fallback.
 cat > /usr/local/bin/carsonos-installer <<'CARSONOS_INSTALLER'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -288,3 +253,8 @@ CARSONOS_DESKTOP
 install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
 install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
 chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
+
+# Refresh desktop MIME metadata after adding the installer entry.
+if command -v update-desktop-database >/dev/null 2>&1; then
+  update-desktop-database /usr/share/applications
+fi
