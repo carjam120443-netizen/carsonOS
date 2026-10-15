@@ -196,8 +196,10 @@ systemctl enable systemd-timesyncd.service
 # The target live root stays free of the Go compiler and base-devel toolchain.
 YAY_PACKAGE="/root/yay.pkg.tar.zst"
 PARU_PACKAGE="/root/paru.pkg.tar.zst"
-if [[ ! -f "$YAY_PACKAGE" || ! -f "$PARU_PACKAGE" ]]; then
-  echo "Missing staged yay or Paru package. Build the ISO with scripts/build-iso.sh." >&2
+CALAMARES_PACKAGE="/root/calamares.pkg.tar.zst"
+CALAMARES_DEPS="/root/calamares-runtime-deps.txt"
+if [[ ! -f "$YAY_PACKAGE" || ! -f "$PARU_PACKAGE" || ! -f "$CALAMARES_PACKAGE" || ! -f "$CALAMARES_DEPS" ]]; then
+  echo "Missing staged AUR packages. Build the ISO with scripts/build-iso.sh." >&2
   exit 1
 fi
 
@@ -206,8 +208,48 @@ fi
 # this local package transaction; keep all other Pacman settings unchanged.
 AUR_PACMAN_CONFIG="$(mktemp /tmp/carsonos-pacman-aur.XXXXXX.conf)"
 sed '/^[[:space:]]*CheckSpace[[:space:]]*$/d' /etc/pacman.conf > "$AUR_PACMAN_CONFIG"
-pacman --config "$AUR_PACMAN_CONFIG" -U --noconfirm "$YAY_PACKAGE" "$PARU_PACKAGE"
-rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$AUR_PACMAN_CONFIG"
+mapfile -t CALAMARES_DEPENDENCIES < <(grep -E '^[a-zA-Z0-9@._+-]+
+
+
+# The live ISO uses systemd-boot for UEFI (the maintained successor
+# to gummiboot) and Syslinux for BIOS. Keep the boot menu text-based;
+# the CarsonOS wallpaper belongs to the desktop, not the boot menu.
+
+# Calamares is built from the AUR during ISO creation; archinstall is a fallback.
+cat > /usr/local/bin/carsonos-installer <<'CARSONOS_INSTALLER'
+#!/usr/bin/env bash
+set -euo pipefail
+if command -v calamares >/dev/null 2>&1; then
+  exec sudo calamares
+fi
+if command -v archinstall >/dev/null 2>&1; then
+  exec sudo archinstall
+fi
+echo "Neither Calamares nor archinstall is installed." >&2
+exit 1
+CARSONOS_INSTALLER
+chmod 0755 /usr/local/bin/carsonos-installer
+
+cat > /usr/share/applications/carsonos-installer.desktop <<'CARSONOS_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Install CarsonOS
+Comment=Install CarsonOS using the guided Arch installer
+Exec=carsonos-installer
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+CARSONOS_DESKTOP
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
+ "$CALAMARES_DEPS" | sort -u)
+if (("${#CALAMARES_DEPENDENCIES[@]}" > 0)); then
+  pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${CALAMARES_DEPENDENCIES[@]}"
+fi
+pacman --config "$AUR_PACMAN_CONFIG" -U --noconfirm "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE"
+rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$AUR_PACMAN_CONFIG"
 
 
 # The live ISO uses systemd-boot for UEFI (the maintained successor
