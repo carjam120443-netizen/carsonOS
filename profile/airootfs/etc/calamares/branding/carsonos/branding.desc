@@ -1,0 +1,15 @@
+---
+componentName: CarsonOS
+welcomeStyle: image
+welcomeExpanding: true
+windowExpanding: normal
+windowSize: 900px,600px
+productName: CarsonOS
+shortProductName: CarsonOS
+version: Preview
+shortVersion: Preview
+bootloaderEntryName: CarsonOS
+productUrl: https://github.com/carjam120443-netizen/carsonOS
+supportUrl: https://github.com/carjam120443-netizen/carsonOS/issues
+knownIssuesUrl: https://github.com/carjam120443-netizen/carsonOS/issues
+donationUrl: https://github.com/carjam120443-netizen/carsonOS
