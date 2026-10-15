@@ -102,8 +102,7 @@ parted
 gptfdisk
 squashfs-tools
 
-# Graphical installer and GRUB support
-grub
+# Bootloader and graphical support
 efibootmgr
 librsvg
 polkit-gnome
