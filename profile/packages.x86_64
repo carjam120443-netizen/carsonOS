@@ -1,6 +1,7 @@
 # CarsonOS base and archiso boot support
 base
 linux
+linux-lts
 linux-firmware
 mkinitcpio
 mkinitcpio-archiso
