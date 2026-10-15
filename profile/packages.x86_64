@@ -80,6 +80,9 @@ nano
 firefox
 ttf-dejavu
 noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+noto-fonts-extra
 pipewire
 pipewire-alsa
 pipewire-pulse
