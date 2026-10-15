@@ -2,11 +2,11 @@
 
 ## Current approach
 
-The live image currently uses the Arch `archinstall` guided installer. The **Install CarsonOS** desktop icon and System application-menu entry run `carsonos-installer`, which launches `archinstall` in the live session.
+The live image is intended to use Calamares, built from the AUR during ISO creation. The **Install CarsonOS** desktop icon and System application-menu entry run `carsonos-installer`, which launches Calamares and falls back to `archinstall` if Calamares is unavailable.
 
-The live desktop is configured around XFCE, LightDM, NetworkManager, a tray applet for network controls, PipeWire/WirePlumber audio, volume controls, a dark CarsonOS terminal palette, and the original CarsonOS wallpaper.
+The live desktop uses Cinnamon by default, with LightDM, NetworkManager, PipeWire/WirePlumber audio, volume controls, and the original CarsonOS wallpaper.
 
-Calamares is not bundled because it is not available from the enabled official Arch repositories. It was removed from the package list so ISO builds can proceed. The live ISO uses systemd-boot for UEFI, the maintained successor to gummiboot, and Syslinux for BIOS. The boot menu stays text-based by design; the CarsonOS wallpaper is used on the desktop rather than forced into the bootloader.
+Calamares is built from the AUR as part of the ISO build, so the build needs internet access and a working Arch build environment. The Calamares setup is experimental and must be validated with a disposable VM before any real installation. The live ISO uses systemd-boot for UEFI and Syslinux for BIOS; the CarsonOS wallpaper is applied to Cinnamon, not the boot menu.
 
 ## Before testing
 
@@ -19,7 +19,7 @@ Calamares is not bundled because it is not available from the enabled official A
 
 ## Known limitations
 
-- Calamares is not included in the ISO yet. A separately packaged build and a complete install test are needed before it can be offered.
+- Calamares is AUR-built and included, but its installation configuration has not yet been verified end-to-end. Treat it as experimental.
 - The `archinstall` fallback relies on the version bundled in the live image; it is normally recommended for use from the official Arch Linux ISO.
 - For UEFI installs, select systemd-boot in `archinstall` (the maintained successor to gummiboot). The live ISO uses systemd-boot for UEFI and Syslinux for BIOS.
 - The ISO profile has not been declared working until it has been built and tested.
