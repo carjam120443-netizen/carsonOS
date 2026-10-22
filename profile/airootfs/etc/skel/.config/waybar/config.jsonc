@@ -1,0 +1,88 @@
+{
+  "layer": "top",
+  "position": "bottom",
+  "height": 38,
+  "spacing": 8,
+  "margin": "0 12 10 12",
+  "modules-left": ["custom/carson", "hyprland/workspaces", "hyprland/window"],
+  "modules-center": ["clock"],
+  "modules-right": ["pulseaudio", "network", "cpu", "memory", "tray", "battery", "custom/power"],
+
+  "custom/carson": {
+    "format": "◆  CARSONOS",
+    "tooltip": true,
+    "tooltip-format": "CarsonOS • Your desktop. Your system.",
+    "on-click": "wofi --show drun"
+  },
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "on-click": "activate",
+    "format-icons": {
+      "1": "",
+      "2": "󰈹",
+      "3": "󰆍",
+      "4": "󰝚",
+      "5": "󰒓",
+      "urgent": "",
+      "active": "",
+      "default": ""
+    },
+    "persistent-workspaces": {
+      "*": 5
+    }
+  },
+  "hyprland/window": {
+    "format": "{}",
+    "max-length": 48,
+    "separate-outputs": true
+  },
+  "clock": {
+    "format": "󰥔  {:%a %b %d  ·  %I:%M %p}",
+    "tooltip-format": "<big>{:%A, %B %d, %Y}</big>\n<tt>{calendar}</tt>"
+  },
+  "pulseaudio": {
+    "format": "{icon}  {volume}%",
+    "format-muted": "󰝟  muted",
+    "format-icons": {
+      "default": ["󰕿", "󰖀", "󰕾"]
+    },
+    "on-click": "pavucontrol",
+    "scroll-step": 5
+  },
+  "network": {
+    "format-wifi": "󰖩  {essid}",
+    "format-ethernet": "󰈀  wired",
+    "format-disconnected": "󰖪  offline",
+    "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
+    "on-click": "nm-connection-editor"
+  },
+  "cpu": {
+    "format": "  {usage}%",
+    "interval": 3,
+    "tooltip": false
+  },
+  "memory": {
+    "format": "  {percentage}%",
+    "interval": 5,
+    "tooltip": false
+  },
+  "tray": {
+    "icon-size": 16,
+    "spacing": 8
+  },
+  "battery": {
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon}  {capacity}%",
+    "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "tooltip": false
+  },
+  "custom/power": {
+    "format": "⏻",
+    "tooltip": true,
+    "tooltip-format": "Session and power options",
+    "on-click": "wlogout"
+  }
+}
