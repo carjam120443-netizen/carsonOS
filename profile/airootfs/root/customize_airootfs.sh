@@ -186,6 +186,9 @@ cp /etc/skel/.bashrc.carsonos /home/liveuser/.bashrc.carsonos
 install -d -m 0755 /home/liveuser/.config
 cp -a /etc/skel/.config/fastfetch /home/liveuser/.config/
 cp -a /etc/skel/.config/hypr /home/liveuser/.config/
+cp -a /etc/skel/.config/waybar /home/liveuser/.config/
+cp -a /etc/skel/.config/kitty /home/liveuser/.config/
+cp -a /etc/skel/.config/wofi /home/liveuser/.config/
 # Reapply the ISO's XFCE channel settings explicitly, including the pinned panel.
 install -d -m 0755 /home/liveuser/.config/xfce4/xfconf/xfce-perchannel-xml
 cp -af /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/*.xml /home/liveuser/.config/xfce4/xfconf/xfce-perchannel-xml/
