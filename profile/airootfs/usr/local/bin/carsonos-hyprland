@@ -1,11 +1,22 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
-if [[ $EUID -ne 0 ]]; then
-  exec sudo /usr/local/bin/carsonos-hyprland "$@"
+# Install and configure CarsonOS's optional, bottom-bar-first Hyprland desktop.
+# Safe to run repeatedly. This changes only the current live/installed system.
+
+if [[ ${EUID} -ne 0 ]]; then
+  if command -v sudo >/dev/null 2>&1; then
+    exec sudo -- /usr/local/bin/carsonos-hyprland "$@"
+  fi
+  echo "Run this installer as root (or install sudo first)." >&2
+  exit 1
 fi
 
-echo "Installing the optional CarsonOS Hyprland desktop..."
+echo
+echo "  CarsonOS // Hyprland setup"
+echo "  Installing the Wayland desktop and CarsonOS rice..."
+echo
+
 pacman -Syu --needed --noconfirm \
   hyprland \
   xdg-desktop-portal-hyprland \
@@ -13,16 +24,80 @@ pacman -Syu --needed --noconfirm \
   waybar \
   wofi \
   kitty \
-  polkit-kde-agent
+  hyprpaper \
+  polkit-kde-agent \
+  qt5-wayland \
+  qt6-wayland \
+  grim \
+  slurp \
+  wl-clipboard \
+  brightnessctl \
+  playerctl \
+  wlogout \
+  ttf-jetbrains-mono-nerd
 
-# Turn off LightDM autologin in this live session so the session chooser is available.
+# The SVG is CarsonOS's canonical wallpaper. Render a raster copy for Hyprpaper.
+WALLPAPER_DIR=/usr/share/backgrounds/carsonos
+WALLPAPER_SVG="$WALLPAPER_DIR/default.svg"
+WALLPAPER_PNG="$WALLPAPER_DIR/default.png"
+if [[ -r "$WALLPAPER_SVG" ]] && command -v rsvg-convert >/dev/null 2>&1; then
+  rsvg-convert --width 1920 --height 1080 --output "$WALLPAPER_PNG" "$WALLPAPER_SVG"
+fi
+if [[ ! -r "$WALLPAPER_PNG" ]]; then
+  echo "Could not create $WALLPAPER_PNG from the CarsonOS default wallpaper." >&2
+  echo "Check that /usr/share/backgrounds/carsonos/default.svg and librsvg are installed." >&2
+  exit 1
+fi
+
+# Copy the shipped defaults into the invoking user's home. Re-running this
+# installer deliberately restores CarsonOS's supplied Hyprland/Waybar theme.
+TARGET_USER="${SUDO_USER:-}"
+if [[ -z "$TARGET_USER" || "$TARGET_USER" == root ]]; then
+  TARGET_USER=liveuser
+fi
+TARGET_HOME="$(getent passwd "$TARGET_USER" | cut -d: -f6 || true)"
+if [[ -z "$TARGET_HOME" || ! -d "$TARGET_HOME" ]]; then
+  echo "Could not find a home directory for user '$TARGET_USER'." >&2
+  echo "Packages are installed; copy the CarsonOS configs from /etc/skel/.config manually." >&2
+  exit 1
+fi
+
+for config_dir in hypr waybar kitty wofi; do
+  if [[ -d "/etc/skel/.config/$config_dir" ]]; then
+    install -d -o "$TARGET_USER" -g "$TARGET_USER" "$TARGET_HOME/.config/$config_dir"
+    cp -a "/etc/skel/.config/$config_dir/." "$TARGET_HOME/.config/$config_dir/"
+    chown -R "$TARGET_USER:$TARGET_USER" "$TARGET_HOME/.config/$config_dir"
+  fi
+done
+
+# Update the wallpaper path in case the install location differs from defaults.
+if [[ -f "$TARGET_HOME/.config/hypr/hyprpaper.conf" ]]; then
+  sed -i "s|^wallpaper *=.*|wallpaper = ,$WALLPAPER_PNG|" "$TARGET_HOME/.config/hypr/hyprpaper.conf"
+  sed -i "s|^preload *=.*|preload = $WALLPAPER_PNG|" "$TARGET_HOME/.config/hypr/hyprpaper.conf"
+  chown "$TARGET_USER:$TARGET_USER" "$TARGET_HOME/.config/hypr/hyprpaper.conf"
+fi
+
+# LightDM autologin hides the session selector. Disable only its autologin
+# settings so the user can choose Hyprland; leave the default desktop unchanged.
 LIGHTDM_CONF=/etc/lightdm/lightdm.conf.d/50-carsonos.conf
 if [[ -f "$LIGHTDM_CONF" ]]; then
-  sed -i -e '/^autologin-user=/d' -e '/^autologin-user-timeout=/d' "$LIGHTDM_CONF"
+  sed -i \
+    -e '/^[[:space:]]*autologin-user=/d' \
+    -e '/^[[:space:]]*autologin-user-timeout=/d' \
+    "$LIGHTDM_CONF"
 fi
 
 echo
-echo "Hyprland is installed for this live session."
-echo "Log out, choose Hyprland from the LightDM session menu, and log in again."
-echo "XFCE remains the default desktop in CarsonOS."
-echo "Note: live-session package changes are temporary and reset when you reboot."
+echo "Hyprland is installed and the CarsonOS rice is configured."
+echo "1. Log out of the current desktop."
+echo "2. In LightDM, open the session menu and choose Hyprland."
+echo "3. Log in. The CarsonOS wallpaper and bottom Waybar should appear."
+echo
+echo "Keyboard shortcuts:"
+echo "  Super + Enter       Terminal"
+echo "  Super + D           App launcher"
+echo "  Super + E           File manager"
+echo "  Super + Q           Close window"
+echo "  Super + Shift + M   Exit Hyprland"
+echo
+echo "On the live ISO, package changes reset after reboot."
