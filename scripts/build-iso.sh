@@ -32,6 +32,8 @@ CALAMARES_STAGE_PACKAGE="$PROFILE/airootfs/root/calamares.pkg.tar.zst"
 CALAMARES_DEPS_STAGE="$PROFILE/airootfs/root/calamares-runtime-deps.txt"
 BRAVE_ORIGIN_STAGE="$PROFILE/airootfs/root/brave-origin-bin.pkg.tar.zst"
 BRAVE_ORIGIN_DEPS_STAGE="$PROFILE/airootfs/root/brave-origin-runtime-deps.txt"
+BASHFUL_STAGE_PACKAGE="$PROFILE/airootfs/root/bashful.pkg.tar.zst"
+BASHFUL_DEPS_STAGE="$PROFILE/airootfs/root/bashful-runtime-deps.txt"
 AUR_SUDOERS="/etc/sudoers.d/${AUR_BUILD_USER}"
 
 cleanup_yay_build() {
@@ -41,11 +43,11 @@ cleanup_yay_build() {
   if [[ -n "$AUR_BUILD_DIR" && -d "$AUR_BUILD_DIR" ]]; then
     rm -rf "$AUR_BUILD_DIR"
   fi
-  rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$CALAMARES_STAGE_PACKAGE" "$CALAMARES_DEPS_STAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE"
+  rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$CALAMARES_STAGE_PACKAGE" "$CALAMARES_DEPS_STAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE" "$BASHFUL_STAGE_PACKAGE" "$BASHFUL_DEPS_STAGE"
   rm -f "$AUR_SUDOERS"
 }
 trap cleanup_yay_build EXIT
-rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE"
+rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE" "$BASHFUL_STAGE_PACKAGE" "$BASHFUL_DEPS_STAGE"
 
 # These dependencies are installed only in the disposable/building system.
 pacman -S --needed --noconfirm base-devel go git rust sudo
@@ -94,7 +96,17 @@ if [[ -z "$BRAVE_ORIGIN_PACKAGE" ]]; then
 fi
 install -m 0644 "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_STAGE"
 bsdtar -xOf "$BRAVE_ORIGIN_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$BRAVE_ORIGIN_DEPS_STAGE"
-echo "Staged yay, Paru, Calamares, and Brave Origin packages for the CarsonOS live image."
+# Bashful is a Go-based YAML task runner built from the AUR.
+runuser -u "$AUR_BUILD_USER" -- git clone --depth 1 https://aur.archlinux.org/bashful.git "$AUR_BUILD_DIR/src/bashful"
+runuser -u "$AUR_BUILD_USER" -- bash -c "cd \"$AUR_BUILD_DIR/src/bashful\" && makepkg --syncdeps --noconfirm"
+BASHFUL_PACKAGE="$(find "$AUR_BUILD_DIR/src/bashful" -maxdepth 1 -type f -name "bashful-[0-9]*-*.pkg.tar.zst" -print -quit)"
+if [[ -z "$BASHFUL_PACKAGE" ]]; then
+  echo "Failed to build Bashful: package archive not found." >&2
+  exit 1
+fi
+install -m 0644 "$BASHFUL_PACKAGE" "$BASHFUL_STAGE_PACKAGE"
+bsdtar -xOf "$BASHFUL_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$BASHFUL_DEPS_STAGE"
+echo "Staged yay, Paru, Calamares, Brave Origin, and Bashful packages for the CarsonOS live image."
 
 mkarchiso -v -w "$WORK" -o "$OUT" "$PROFILE"
 printf '\nBuild finished. Check ISO output in: %s\n' "$OUT"
