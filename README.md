@@ -3,7 +3,7 @@
 **A custom Arch Linux-based desktop operating system.**
 <img src="https://www.svgrepo.com/show/349296/arch-linux.svg" alt="Arch Linux logo" width="40" height="40" align="right" />
 <img src="https://cdn-icons-png.flaticon.com/512/518/518713.png" alt="linux logo" width="40" height="40" align="right" />
-
+# because arch needs to be simpler sometimes
 CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with original Carson branding, a ready-to-use Cinnamon desktop, and a live ISO that boots on a computer and provides an installation entry point.
 
 > **Project status:** Early development. The ISO builds in GitHub Actions and has booted to the CarsonOS live desktop in VirtualBox. Network/package installation and the optional Hyprland path are still being tested. Calamares is built from the AUR during ISO creation and is the default installer, with `archinstall` retained as a fallback. The installer remains experimental until a fresh ISO is built and a full install is tested.
