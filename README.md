@@ -67,6 +67,7 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 5. Use the NetworkManager tray icon to connect to Wi-Fi or inspect wired networking.
 6. Fastfetch displays the custom CarsonOS ASCII logo when you open a terminal.
 7. Cinnamon is the default desktop and uses the original CarsonOS wallpaper. The desktop shortcut **Cinnamon Desktop** opens the Cinnamon session.
+8. Double-click **Easy Archinstall** to launch Archinstall with CarsonOS defaults in a terminal. Review every disk and partition choice carefully before confirming.
 8. Double-click **Install Hyprland** to install the optional Hyprland/Wayland desktop and the CarsonOS rice (Waybar pinned to the bottom, matching Wofi/Kitty styling, and the default CarsonOS wallpaper rendered for Hyprpaper). Then log out and select **Hyprland** from the LightDM session menu. The live session resets installed packages on reboot.
 9. Double-click **Install CarsonOS** to launch Calamares. The installer is built from the AUR during ISO creation and remains experimental until a full install test passes. Test only in a disposable VM; installation can erase data.
 
@@ -79,6 +80,7 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 - `carsonos-hyprland` — installs Hyprland and supporting Wayland tools on demand, renders the default CarsonOS wallpaper for Hyprpaper, applies the bundled Hyprland/Waybar/Wofi/Kitty theme, and disables live-session autologin so LightDM's session selector is available.
 - Cinnamon — the default desktop environment, with the original CarsonOS wallpaper.
 - `carsonos-installer` — launches Calamares, falling back to `archinstall` if needed.
+- `easy-archinstall` — launches Archinstall directly with the CarsonOS preset when available; the **Easy Archinstall** desktop shortcut opens it in a terminal. Disk and partition choices remain interactive.
 - `update-system` — shell alias for a full `pacman -Syu` system update.
 
 ## Development roadmap
@@ -88,6 +90,7 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 - [x] Add original CarsonOS vector wallpaper and terminal helper commands.
 - [x] Add NetworkManager tray controls and PipeWire audio packages.
 - [x] Add a desktop and menu launcher for the `archinstall` guided installer.
+- [x] Add the `easy-archinstall` command and an **Easy Archinstall** desktop shortcut.
 - [x] Build the ISO successfully in GitHub Actions.
 - [x] Boot the live desktop in VirtualBox and verify the CarsonOS wallpaper.
 - [x] Add an optional Hyprland setup script and a CarsonOS-themed Waybar pinned to the bottom.
