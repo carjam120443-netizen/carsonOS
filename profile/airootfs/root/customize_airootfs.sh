@@ -282,8 +282,8 @@ if [[ -f "$CFAN_PACKAGE" && -f "$CFAN_DEPS" ]]; then
   mapfile -t CFAN_DEPENDENCIES < <(
     grep -E '^[a-zA-Z0-9@._+-]+$' "$CFAN_DEPS" | sort -u
   )
-  if (("\${#CFAN_DEPENDENCIES[@]}" > 0)); then
-    pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "\${CFAN_DEPENDENCIES[@]}"
+  if (("${#CFAN_DEPENDENCIES[@]}" > 0)); then
+    pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${CFAN_DEPENDENCIES[@]}"
   fi
   AUR_PACKAGES+=("$CFAN_PACKAGE")
 else
@@ -294,13 +294,13 @@ for deps_file in "$ADB_GRIPPER_DEPS" "$ADB_WIFI_SCANNER_DEPS" "$ADBCONTROL_DEPS"
   mapfile -t ADB_DEPENDENCIES < <(
     grep -E '^[a-zA-Z0-9@._+-]+$' "$deps_file" | sort -u
   )
-  if (("\${#ADB_DEPENDENCIES[@]}" > 0)); then
-    pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "\${ADB_DEPENDENCIES[@]}"
+  if (("${#ADB_DEPENDENCIES[@]}" > 0)); then
+    pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${ADB_DEPENDENCIES[@]}"
   fi
 done
 
-pacman --config "$AUR_PACMAN_CONFIG" -U --needed --noconfirm "\${AUR_PACKAGES[@]}"
-rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$CFAN_PACKAGE" "$CFAN_DEPS" \\
+pacman --config "$AUR_PACMAN_CONFIG" -U --needed --noconfirm "${AUR_PACKAGES[@]}"
+rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$CFAN_PACKAGE" "$CFAN_DEPS" \
   "$ADB_GRIPPER_PACKAGE" "$ADB_GRIPPER_DEPS" "$ADB_WIFI_SCANNER_PACKAGE" "$ADB_WIFI_SCANNER_DEPS" "$ADBCONTROL_PACKAGE" "$ADBCONTROL_DEPS" "$AUR_PACMAN_CONFIG"
 
 # Calamares is the preferred guided installer; archinstall remains a fallback.
