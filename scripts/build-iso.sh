@@ -34,6 +34,8 @@ BRAVE_ORIGIN_STAGE="$PROFILE/airootfs/root/brave-origin-bin.pkg.tar.zst"
 BRAVE_ORIGIN_DEPS_STAGE="$PROFILE/airootfs/root/brave-origin-runtime-deps.txt"
 BASHFUL_STAGE_PACKAGE="$PROFILE/airootfs/root/bashful.pkg.tar.zst"
 BASHFUL_DEPS_STAGE="$PROFILE/airootfs/root/bashful-runtime-deps.txt"
+CFAN_STAGE_PACKAGE="$PROFILE/airootfs/root/cfan-git.pkg.tar.zst"
+CFAN_DEPS_STAGE="$PROFILE/airootfs/root/cfan-git-runtime-deps.txt"
 AUR_SUDOERS="/etc/sudoers.d/${AUR_BUILD_USER}"
 
 cleanup_yay_build() {
@@ -43,7 +45,7 @@ cleanup_yay_build() {
   if [[ -n "$AUR_BUILD_DIR" && -d "$AUR_BUILD_DIR" ]]; then
     rm -rf "$AUR_BUILD_DIR"
   fi
-  rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$CALAMARES_STAGE_PACKAGE" "$CALAMARES_DEPS_STAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE" "$BASHFUL_STAGE_PACKAGE" "$BASHFUL_DEPS_STAGE"
+  rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$CALAMARES_STAGE_PACKAGE" "$CALAMARES_DEPS_STAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE" "$BASHFUL_STAGE_PACKAGE" "$BASHFUL_DEPS_STAGE" "$CFAN_STAGE_PACKAGE" "$CFAN_DEPS_STAGE"
   rm -f "$AUR_SUDOERS"
 }
 trap cleanup_yay_build EXIT
@@ -106,7 +108,17 @@ if [[ -z "$BASHFUL_PACKAGE" ]]; then
 fi
 install -m 0644 "$BASHFUL_PACKAGE" "$BASHFUL_STAGE_PACKAGE"
 bsdtar -xOf "$BASHFUL_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$BASHFUL_DEPS_STAGE"
-echo "Staged yay, Paru, Calamares, Brave Origin, and Bashful packages for the CarsonOS live image."
+# cfan-git is included as an optional user-configured fan utility. Do not enable any fan-control service by default.
+runuser -u "$AUR_BUILD_USER" -- git clone --depth 1 https://aur.archlinux.org/cfan-git.git "$AUR_BUILD_DIR/src/cfan-git"
+runuser -u "$AUR_BUILD_USER" -- bash -c "cd \"$AUR_BUILD_DIR/src/cfan-git\" && makepkg --syncdeps --noconfirm"
+CFAN_PACKAGE="$(find "$AUR_BUILD_DIR/src/cfan-git" -maxdepth 1 -type f -name "cfan-git-[0-9]*-*.pkg.tar.zst" -print -quit)"
+if [[ -z "$CFAN_PACKAGE" ]]; then
+  echo "Failed to build cfan-git: package archive not found." >&2
+  exit 1
+fi
+install -m 0644 "$CFAN_PACKAGE" "$CFAN_STAGE_PACKAGE"
+bsdtar -xOf "$CFAN_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$CFAN_DEPS_STAGE"
+echo "Staged yay, Paru, Calamares, Brave Origin, Bashful, and cfan-git packages for the CarsonOS live image."
 
 mkarchiso -v -w "$WORK" -o "$OUT" "$PROFILE"
 printf '\nBuild finished. Check ISO output in: %s\n' "$OUT"
