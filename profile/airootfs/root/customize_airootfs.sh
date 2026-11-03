@@ -207,7 +207,7 @@ cp -a /etc/skel/.config/wofi /home/liveuser/.config/
 # Reapply the ISO's XFCE channel settings explicitly, including the pinned panel.
 install -d -m 0755 /home/liveuser/.config/xfce4/xfconf/xfce-perchannel-xml
 cp -af /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/*.xml /home/liveuser/.config/xfce4/xfconf/xfce-perchannel-xml/
-chown liveuser:liveuser /home/liveuser/.bashrc /home/liveuser/.bashrc.carsonos
+chown liveuser:liveuser /home/liveuser/.bashrc /home/liveuser/.bashrc.carsonos /home/liveuser/.config/mimeapps.list
 chown -R liveuser:liveuser /home/liveuser/.config/fastfetch /home/liveuser/.config/hypr /home/liveuser/.config/xfce4
 
 # NetworkManager starts for Ethernet and Wi-Fi; the applet exposes Wi-Fi controls.
