@@ -114,16 +114,24 @@ if [[ -z "$BASHFUL_PACKAGE" ]]; then
 fi
 install -m 0644 "$BASHFUL_PACKAGE" "$BASHFUL_STAGE_PACKAGE"
 bsdtar -xOf "$BASHFUL_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$BASHFUL_DEPS_STAGE"
-# cfan-git is included as an optional user-configured fan utility. Do not enable any fan-control service by default.
-runuser -u "$AUR_BUILD_USER" -- git clone --depth 1 https://aur.archlinux.org/cfan-git.git "$AUR_BUILD_DIR/src/cfan-git"
-runuser -u "$AUR_BUILD_USER" -- bash -c "cd \"$AUR_BUILD_DIR/src/cfan-git\" && makepkg --syncdeps --noconfirm"
-CFAN_PACKAGE="$(find "$AUR_BUILD_DIR/src/cfan-git" -maxdepth 1 -type f -name "cfan-git-*.pkg.tar.zst" -print -quit)"
-if [[ -z "$CFAN_PACKAGE" ]]; then
-  echo "Failed to build cfan-git: package archive not found." >&2
-  exit 1
+# cfan-git is best-effort: its CPU-specific source generator may not support
+# the virtualized CPU exposed by CI. Keep this hardware utility from blocking
+# the rest of the ISO build, and never enable fan control automatically.
+if runuser -u "$AUR_BUILD_USER" -- git clone --depth 1 https://aur.archlinux.org/cfan-git.git "$AUR_BUILD_DIR/src/cfan-git"; then
+  if runuser -u "$AUR_BUILD_USER" -- bash -c "cd \"$AUR_BUILD_DIR/src/cfan-git\" && makepkg --syncdeps --noconfirm"; then
+    CFAN_PACKAGE="$(find "$AUR_BUILD_DIR/src/cfan-git" -maxdepth 1 -type f -name "cfan-git-*.pkg.tar.zst" -print -quit)"
+    if [[ -n "$CFAN_PACKAGE" ]]; then
+      install -m 0644 "$CFAN_PACKAGE" "$CFAN_STAGE_PACKAGE"
+      bsdtar -xOf "$CFAN_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$CFAN_DEPS_STAGE"
+    else
+      echo "WARNING: cfan-git produced no package archive; continuing without it." >&2
+    fi
+  else
+    echo "WARNING: cfan-git failed to build on this runner; continuing without this optional hardware utility." >&2
+  fi
+else
+  echo "WARNING: Could not clone cfan-git; continuing without this optional hardware utility." >&2
 fi
-install -m 0644 "$CFAN_PACKAGE" "$CFAN_STAGE_PACKAGE"
-bsdtar -xOf "$CFAN_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$CFAN_DEPS_STAGE"
 
 # Android device utilities: GUI management, wireless ADB discovery, and remote control.
 for aur_package in adb-gripper adb-wifi-scanner adbcontrol; do
