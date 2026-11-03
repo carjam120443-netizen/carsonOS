@@ -80,6 +80,7 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 - `carson-help` — quick reference for common commands.
 - `carsonos-hyprland` — installs Hyprland and supporting Wayland tools on demand, renders the default CarsonOS wallpaper for Hyprpaper, applies the bundled Hyprland/Waybar/Wofi/Kitty theme, and disables live-session autologin so LightDM's session selector is available.
 - Cinnamon — the default desktop environment, with the original CarsonOS wallpaper.
+- Brave Origin — the default browser for HTTP/HTTPS links and HTML files; Firefox remains available as an alternative.
 - `carsonos-installer` — launches Calamares, falling back to `archinstall` if needed.
 - `easy-archinstall` — launches Archinstall directly with the CarsonOS preset when available; the **Easy Archinstall** desktop shortcut opens it in a terminal. Disk and partition choices remain interactive.
 - `update-system` — shell alias for a full `pacman -Syu` system update.
