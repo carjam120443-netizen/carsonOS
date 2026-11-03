@@ -111,7 +111,7 @@ bsdtar -xOf "$BASHFUL_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[
 # cfan-git is included as an optional user-configured fan utility. Do not enable any fan-control service by default.
 runuser -u "$AUR_BUILD_USER" -- git clone --depth 1 https://aur.archlinux.org/cfan-git.git "$AUR_BUILD_DIR/src/cfan-git"
 runuser -u "$AUR_BUILD_USER" -- bash -c "cd \"$AUR_BUILD_DIR/src/cfan-git\" && makepkg --syncdeps --noconfirm"
-CFAN_PACKAGE="$(find "$AUR_BUILD_DIR/src/cfan-git" -maxdepth 1 -type f -name "cfan-git-[0-9]*-*.pkg.tar.zst" -print -quit)"
+CFAN_PACKAGE="$(find "$AUR_BUILD_DIR/src/cfan-git" -maxdepth 1 -type f -name "cfan-git-*.pkg.tar.zst" -print -quit)"
 if [[ -z "$CFAN_PACKAGE" ]]; then
   echo "Failed to build cfan-git: package archive not found." >&2
   exit 1
