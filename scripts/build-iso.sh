@@ -146,7 +146,7 @@ for aur_package in adb-gripper adb-wifi-scanner adbcontrol; do
   bsdtar -xOf "$package_archive" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$PROFILE/airootfs/root/${aur_package}-runtime-deps.txt"
 done
 
-echo "Staged yay, Paru, Calamares, Brave Origin, cfan-git, and Android ADB utility packages for the CarsonOS live image."
+echo "Staged required CarsonOS packages and Android ADB utilities; cfan-git is included only if its optional build succeeds."
 
 mkarchiso -v -w "$WORK" -o "$OUT" "$PROFILE"
 printf '\nBuild finished. Check ISO output in: %s\n' "$OUT"
