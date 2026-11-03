@@ -29,7 +29,7 @@ CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with origin
 | Audio | PipeWire, WirePlumber, PulseAudio compatibility, and volume controls |
 | Init and services | systemd |
 | Bootloader | systemd-boot for UEFI (the maintained successor to gummiboot); Syslinux for BIOS |
-| Package management | pacman, official Arch repositories, and `yay` built from its AUR PKGBUILD |
+| Package management | pacman, official Arch repositories, and `yay` and `bashful` built from their AUR PKGBUILDs |
 | System information | `fastfetch` with a custom CarsonOS ASCII logo, shown when a terminal opens |
 | Optional desktops | Hyprland; Cinnamon is the default desktop |
 | Installer | Calamares from the AUR, with `archinstall` as a fallback |
@@ -76,7 +76,8 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 
 - `fastfetch` — system summary with the built-in CarsonOS ASCII logo; it runs automatically when an interactive terminal opens.
 - `yay` — AUR helper built during the ISO customization step. AUR packages are community-maintained; review PKGBUILDs before installing packages.
-- `carsonfetch` — basic system and hardware summary.
+- `carsonfetch` — basic system and hardware summary, using the same white/blue/dark-gray CarsonOS ASCII banner as Fastfetch.
+- `bashful` — Go-based YAML task runner built from the AUR during ISO creation; it is a scripting/build utility, not a system-information fetch app.
 - `carson-help` — quick reference for common commands.
 - `carsonos-hyprland` — installs Hyprland and supporting Wayland tools on demand, renders the default CarsonOS wallpaper for Hyprpaper, applies the bundled Hyprland/Waybar/Wofi/Kitty theme, and disables live-session autologin so LightDM's session selector is available.
 - Cinnamon — the default desktop environment, with the original CarsonOS wallpaper.
