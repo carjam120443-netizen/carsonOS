@@ -30,6 +30,8 @@ YAY_STAGE_PACKAGE="$PROFILE/airootfs/root/yay.pkg.tar.zst"
 PARU_STAGE_PACKAGE="$PROFILE/airootfs/root/paru.pkg.tar.zst"
 CALAMARES_STAGE_PACKAGE="$PROFILE/airootfs/root/calamares.pkg.tar.zst"
 CALAMARES_DEPS_STAGE="$PROFILE/airootfs/root/calamares-runtime-deps.txt"
+BRAVE_ORIGIN_STAGE="$PROFILE/airootfs/root/brave-origin-bin.pkg.tar.zst"
+BRAVE_ORIGIN_DEPS_STAGE="$PROFILE/airootfs/root/brave-origin-runtime-deps.txt"
 AUR_SUDOERS="/etc/sudoers.d/${AUR_BUILD_USER}"
 
 cleanup_yay_build() {
@@ -39,11 +41,11 @@ cleanup_yay_build() {
   if [[ -n "$AUR_BUILD_DIR" && -d "$AUR_BUILD_DIR" ]]; then
     rm -rf "$AUR_BUILD_DIR"
   fi
-  rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$CALAMARES_STAGE_PACKAGE" "$CALAMARES_DEPS_STAGE"
+  rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$CALAMARES_STAGE_PACKAGE" "$CALAMARES_DEPS_STAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE"
   rm -f "$AUR_SUDOERS"
 }
 trap cleanup_yay_build EXIT
-rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE"
+rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE"
 
 # These dependencies are installed only in the disposable/building system.
 pacman -S --needed --noconfirm base-devel go git rust sudo
@@ -81,7 +83,18 @@ if [[ -z "$CALAMARES_PACKAGE" ]]; then
 fi
 install -m 0644 "$CALAMARES_PACKAGE" "$CALAMARES_STAGE_PACKAGE"
 bsdtar -xOf "$CALAMARES_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$CALAMARES_DEPS_STAGE"
-echo "Staged yay, Paru, and Calamares packages for the CarsonOS live image."
+# Brave Origin is a binary AUR package. Build it outside the live root,
+# then stage its package and runtime dependencies for installation.
+runuser -u "$AUR_BUILD_USER" -- git clone --depth 1 https://aur.archlinux.org/brave-origin-bin.git "$AUR_BUILD_DIR/src/brave-origin-bin"
+runuser -u "$AUR_BUILD_USER" -- bash -c "cd \"$AUR_BUILD_DIR/src/brave-origin-bin\" && makepkg --syncdeps --noconfirm"
+BRAVE_ORIGIN_PACKAGE="$(find "$AUR_BUILD_DIR/src/brave-origin-bin" -maxdepth 1 -type f -name "brave-origin-bin-[0-9]*-*.pkg.tar.zst" -print -quit)"
+if [[ -z "$BRAVE_ORIGIN_PACKAGE" ]]; then
+  echo "Failed to build Brave Origin: package archive not found." >&2
+  exit 1
+fi
+install -m 0644 "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_STAGE"
+bsdtar -xOf "$BRAVE_ORIGIN_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$BRAVE_ORIGIN_DEPS_STAGE"
+echo "Staged yay, Paru, Calamares, and Brave Origin packages for the CarsonOS live image."
 
 mkarchiso -v -w "$WORK" -o "$OUT" "$PROFILE"
 printf '\nBuild finished. Check ISO output in: %s\n' "$OUT"
