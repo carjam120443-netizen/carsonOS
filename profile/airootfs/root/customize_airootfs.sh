@@ -257,7 +257,15 @@ if (("${#CALAMARES_DEPENDENCIES[@]}" > 0)); then
 fi
 
 mapfile -t BRAVE_ORIGIN_DEPENDENCIES < <(
-  grep -E '^[a-zA-Z0-9@._+-]+
+  grep -E "^[a-zA-Z0-9@._+-]+$" "$BRAVE_ORIGIN_DEPS" | sort -u
+)
+if (("${#BRAVE_ORIGIN_DEPENDENCIES[@]}" > 0)); then
+  pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${BRAVE_ORIGIN_DEPENDENCIES[@]}"
+fi
+
+pacman --config "$AUR_PACMAN_CONFIG" -U --needed --noconfirm \
+  "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$BRAVE_ORIGIN_PACKAGE"
+rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$AUR_PACMAN_CONFIG"
 
 # Calamares is the preferred guided installer; archinstall remains a fallback.
 # CarsonOS preset keeps Archinstall's disk/bootloader/user choices interactive,
