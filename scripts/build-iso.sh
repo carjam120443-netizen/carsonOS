@@ -36,6 +36,12 @@ BASHFUL_STAGE_PACKAGE="$PROFILE/airootfs/root/bashful.pkg.tar.zst"
 BASHFUL_DEPS_STAGE="$PROFILE/airootfs/root/bashful-runtime-deps.txt"
 CFAN_STAGE_PACKAGE="$PROFILE/airootfs/root/cfan-git.pkg.tar.zst"
 CFAN_DEPS_STAGE="$PROFILE/airootfs/root/cfan-git-runtime-deps.txt"
+ADB_GRIPPER_STAGE="$PROFILE/airootfs/root/adb-gripper.pkg.tar.zst"
+ADB_GRIPPER_DEPS_STAGE="$PROFILE/airootfs/root/adb-gripper-runtime-deps.txt"
+ADB_WIFI_SCANNER_STAGE="$PROFILE/airootfs/root/adb-wifi-scanner.pkg.tar.zst"
+ADB_WIFI_SCANNER_DEPS_STAGE="$PROFILE/airootfs/root/adb-wifi-scanner-runtime-deps.txt"
+ADBCONTROL_STAGE="$PROFILE/airootfs/root/adbcontrol.pkg.tar.zst"
+ADBCONTROL_DEPS_STAGE="$PROFILE/airootfs/root/adbcontrol-runtime-deps.txt"
 AUR_SUDOERS="/etc/sudoers.d/${AUR_BUILD_USER}"
 
 cleanup_yay_build() {
@@ -45,11 +51,11 @@ cleanup_yay_build() {
   if [[ -n "$AUR_BUILD_DIR" && -d "$AUR_BUILD_DIR" ]]; then
     rm -rf "$AUR_BUILD_DIR"
   fi
-  rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$CALAMARES_STAGE_PACKAGE" "$CALAMARES_DEPS_STAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE" "$BASHFUL_STAGE_PACKAGE" "$BASHFUL_DEPS_STAGE" "$CFAN_STAGE_PACKAGE" "$CFAN_DEPS_STAGE"
+  rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$CALAMARES_STAGE_PACKAGE" "$CALAMARES_DEPS_STAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE" "$BASHFUL_STAGE_PACKAGE" "$BASHFUL_DEPS_STAGE" "$CFAN_STAGE_PACKAGE" "$CFAN_DEPS_STAGE" "$ADB_GRIPPER_STAGE" "$ADB_GRIPPER_DEPS_STAGE" "$ADB_WIFI_SCANNER_STAGE" "$ADB_WIFI_SCANNER_DEPS_STAGE" "$ADBCONTROL_STAGE" "$ADBCONTROL_DEPS_STAGE"
   rm -f "$AUR_SUDOERS"
 }
 trap cleanup_yay_build EXIT
-rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE" "$BASHFUL_STAGE_PACKAGE" "$BASHFUL_DEPS_STAGE"
+rm -f "$YAY_STAGE_PACKAGE" "$PARU_STAGE_PACKAGE" "$BRAVE_ORIGIN_STAGE" "$BRAVE_ORIGIN_DEPS_STAGE" "$BASHFUL_STAGE_PACKAGE" "$BASHFUL_DEPS_STAGE" "$ADB_GRIPPER_STAGE" "$ADB_GRIPPER_DEPS_STAGE" "$ADB_WIFI_SCANNER_STAGE" "$ADB_WIFI_SCANNER_DEPS_STAGE" "$ADBCONTROL_STAGE" "$ADBCONTROL_DEPS_STAGE"
 
 # These dependencies are installed only in the disposable/building system.
 pacman -S --needed --noconfirm base-devel go git rust sudo
@@ -118,7 +124,21 @@ if [[ -z "$CFAN_PACKAGE" ]]; then
 fi
 install -m 0644 "$CFAN_PACKAGE" "$CFAN_STAGE_PACKAGE"
 bsdtar -xOf "$CFAN_PACKAGE" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$CFAN_DEPS_STAGE"
-echo "Staged yay, Paru, Calamares, Brave Origin, Bashful, and cfan-git packages for the CarsonOS live image."
+
+# Android device utilities: GUI management, wireless ADB discovery, and remote control.
+for aur_package in adb-gripper adb-wifi-scanner adbcontrol; do
+  runuser -u "$AUR_BUILD_USER" -- git clone --depth 1 "https://aur.archlinux.org/${aur_package}.git" "$AUR_BUILD_DIR/src/${aur_package}"
+  runuser -u "$AUR_BUILD_USER" -- bash -c "cd \"$AUR_BUILD_DIR/src/${aur_package}\" && makepkg --syncdeps --noconfirm"
+  package_archive="$(find "$AUR_BUILD_DIR/src/${aur_package}" -maxdepth 1 -type f -name "${aur_package}-*.pkg.tar.zst" -print -quit)"
+  if [[ -z "$package_archive" ]]; then
+    echo "Failed to build ${aur_package}: package archive not found." >&2
+    exit 1
+  fi
+  install -m 0644 "$package_archive" "$PROFILE/airootfs/root/${aur_package}.pkg.tar.zst"
+  bsdtar -xOf "$package_archive" .PKGINFO | sed -n 's/^depend = //p' | sed -E 's/[<>=].*$//' | sort -u > "$PROFILE/airootfs/root/${aur_package}-runtime-deps.txt"
+done
+
+echo "Staged yay, Paru, Calamares, Brave Origin, cfan-git, and Android ADB utility packages for the CarsonOS live image."
 
 mkarchiso -v -w "$WORK" -o "$OUT" "$PROFILE"
 printf '\nBuild finished. Check ISO output in: %s\n' "$OUT"
