@@ -122,12 +122,7 @@ LOGO_FILE="${HOME}/.config/fastfetch/carsonos.txt"
 if [[ -r "$LOGO_FILE" ]]; then
   cat "$LOGO_FILE"
 else
-  cat <<'LOGO'
-     ____ _____ ________ __________ ____             ____ _______/ ___\\__  \\_  __ \/  ___/  _ \\ /    \\   ______  /  _ \\/  ___/\\
-\\  \\___ / __ \\|  | \/\\___ (  <_> )   |  /\\_____/ (  <_>)___ \\
- \\___  >____  /_|  /____  >_____/|__|  /          \\____/____  >
-     \\/     \\/           \\/           \\/                     \\/
-LOGO
+  echo "CarsonOS logo is unavailable: $LOGO_FILE" >&2
 fi
 printf '\033[0m'
 printf '  %-12s %s\n' 'OS' 'CarsonOS (Arch-based)'
