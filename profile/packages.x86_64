@@ -22,7 +22,8 @@ which
 archinstall
 fastfetch
 
-# Networking and hardware support
+# Networking, Android debugging, and hardware support
+android-tools
 networkmanager
 network-manager-applet
 openssh
