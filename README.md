@@ -119,6 +119,9 @@ When reporting an issue, include the ISO build or commit, whether the issue occu
 
 CarsonOS is an independent project based on Arch Linux, not an official Arch Linux release. Early builds are experimental. Test them in a virtual machine first and do not install them over a system containing important data.
 
+## warning 
+if you do install on a real machine please always make sure to back up your old os configs
+
 ## License
 
 A project license has not been selected yet. Add a license before distributing project-specific code or assets as an open-source release. Third-party components retain their own licenses.
