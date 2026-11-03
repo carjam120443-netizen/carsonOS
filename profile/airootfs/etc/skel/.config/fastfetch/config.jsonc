@@ -3,9 +3,6 @@
   "logo": {
     "type": "file",
     "source": "~/.config/fastfetch/carsonos.txt",
-    "color": {
-      "1": "green"
-    },
     "padding": {
       "right": 2
     }
