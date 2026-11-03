@@ -233,7 +233,7 @@ ADB_WIFI_SCANNER_DEPS="/root/adb-wifi-scanner-runtime-deps.txt"
 ADBCONTROL_PACKAGE="/root/adbcontrol.pkg.tar.zst"
 ADBCONTROL_DEPS="/root/adbcontrol-runtime-deps.txt"
 
-for staged_file in "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$CFAN_PACKAGE" "$CFAN_DEPS" "$ADB_GRIPPER_PACKAGE" "$ADB_GRIPPER_DEPS" "$ADB_WIFI_SCANNER_PACKAGE" "$ADB_WIFI_SCANNER_DEPS" "$ADBCONTROL_PACKAGE" "$ADBCONTROL_DEPS"; do
+for staged_file in "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$ADB_GRIPPER_PACKAGE" "$ADB_GRIPPER_DEPS" "$ADB_WIFI_SCANNER_PACKAGE" "$ADB_WIFI_SCANNER_DEPS" "$ADBCONTROL_PACKAGE" "$ADBCONTROL_DEPS"; do
   if [[ ! -f "$staged_file" ]]; then
     echo "Missing staged build file: $staged_file. Build the ISO with scripts/build-iso.sh." >&2
     exit 1
@@ -271,11 +271,350 @@ if (("${#BRAVE_ORIGIN_DEPENDENCIES[@]}" > 0)); then
   pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${BRAVE_ORIGIN_DEPENDENCIES[@]}"
 fi
 
-mapfile -t CFAN_DEPENDENCIES < <(
-  grep -E "^[a-zA-Z0-9@._+-]+$" "$CFAN_DEPS" | sort -u
+# cfan-git is optional because its CPU-specific build step may not support
+# the CPU exposed by a virtualized ISO builder. Install it only when staging succeeded.
+AUR_PACKAGES=(
+  "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE"
+  "$BRAVE_ORIGIN_PACKAGE"
+  "$ADB_GRIPPER_PACKAGE" "$ADB_WIFI_SCANNER_PACKAGE" "$ADBCONTROL_PACKAGE"
 )
-if (("${#CFAN_DEPENDENCIES[@]}" > 0)); then
-  pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${CFAN_DEPENDENCIES[@]}"
+if [[ -f "$CFAN_PACKAGE" && -f "$CFAN_DEPS" ]]; then
+  mapfile -t CFAN_DEPENDENCIES < <(
+    grep -E '^[a-zA-Z0-9@._+-]+ in "$ADB_GRIPPER_DEPS" "$ADB_WIFI_SCANNER_DEPS" "$ADBCONTROL_DEPS"; do
+  mapfile -t ADB_DEPENDENCIES < <(grep -E '^[a-zA-Z0-9@._+-]+
+
+# Calamares is the preferred guided installer; archinstall remains a fallback.
+# CarsonOS preset keeps Archinstall's disk/bootloader/user choices interactive,
+# while preselecting a desktop, network manager, and graphical boot target.
+cat > /usr/local/bin/carsonos-installer <<'CARSONOS_INSTALLER'
+#!/usr/bin/env bash
+set -euo pipefail
+if command -v calamares >/dev/null 2>&1; then
+  exec sudo calamares
+fi
+if command -v archinstall >/dev/null 2>&1; then
+  if [[ -r /etc/carsonos/archinstall.json ]]; then
+    exec sudo archinstall --config /etc/carsonos/archinstall.json
+  fi
+  exec sudo archinstall
+fi
+echo "Neither Calamares nor archinstall is installed." >&2
+exit 1
+CARSONOS_INSTALLER
+chmod 0755 /usr/local/bin/carsonos-installer
+
+cat > /usr/share/applications/carsonos-installer.desktop <<'CARSONOS_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Install CarsonOS
+Comment=Install CarsonOS using the guided Arch installer
+Exec=carsonos-installer
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+CARSONOS_DESKTOP
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
+
+# Easy Archinstall is a direct, beginner-friendly shortcut to Archinstall.
+# Keep Archinstall's disk and partition choices interactive; never auto-select a target.
+cat > /usr/local/bin/easy-archinstall <<'EASY_ARCHINSTALL'
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v archinstall >/dev/null 2>&1; then
+  echo "archinstall is not installed." >&2
+  exit 127
+fi
+
+if [[ $EUID -eq 0 ]]; then
+  SUDO=()
+else
+  SUDO=(sudo)
+fi
+
+if [[ -r /etc/carsonos/archinstall.json ]]; then
+  exec "${SUDO[@]}" archinstall --config /etc/carsonos/archinstall.json
+fi
+exec "${SUDO[@]}" archinstall
+EASY_ARCHINSTALL
+chmod 0755 /usr/local/bin/easy-archinstall
+
+cat > /usr/share/applications/easy-archinstall.desktop <<'EASY_ARCHINSTALL_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Easy Archinstall
+Comment=Launch the guided Arch Linux installer with CarsonOS defaults
+Exec=easy-archinstall
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+EASY_ARCHINSTALL_DESKTOP
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /etc/skel/Desktop/Easy\ Archinstall.desktop
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /home/liveuser/Desktop/Easy\ Archinstall.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Easy\ Archinstall.desktop
+
+# Refresh desktop MIME metadata after adding the installer entry.
+if command -v update-desktop-database >/dev/null 2>&1; then
+  update-desktop-database /usr/share/applications
+fi
+
+# Calamares is the preferred guided installer; archinstall remains a fallback.
+# CarsonOS preset keeps Archinstall's disk/bootloader/user choices interactive,
+# while preselecting a desktop, network manager, and graphical boot target.
+cat > /usr/local/bin/carsonos-installer <<'CARSONOS_INSTALLER'
+#!/usr/bin/env bash
+set -euo pipefail
+if command -v calamares >/dev/null 2>&1; then
+  exec sudo calamares
+fi
+if command -v archinstall >/dev/null 2>&1; then
+  if [[ -r /etc/carsonos/archinstall.json ]]; then
+    exec sudo archinstall --config /etc/carsonos/archinstall.json
+  fi
+  exec sudo archinstall
+fi
+echo "Neither Calamares nor archinstall is installed." >&2
+exit 1
+CARSONOS_INSTALLER
+chmod 0755 /usr/local/bin/carsonos-installer
+
+cat > /usr/share/applications/carsonos-installer.desktop <<'CARSONOS_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Install CarsonOS
+Comment=Install CarsonOS using the guided Arch installer
+Exec=carsonos-installer
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+CARSONOS_DESKTOP
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
+
+# Easy Archinstall is a direct, beginner-friendly shortcut to Archinstall.
+# Keep Archinstall's disk and partition choices interactive; never auto-select a target.
+cat > /usr/local/bin/easy-archinstall <<'EASY_ARCHINSTALL'
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v archinstall >/dev/null 2>&1; then
+  echo "archinstall is not installed." >&2
+  exit 127
+fi
+
+if [[ $EUID -eq 0 ]]; then
+  SUDO=()
+else
+  SUDO=(sudo)
+fi
+
+if [[ -r /etc/carsonos/archinstall.json ]]; then
+  exec "${SUDO[@]}" archinstall --config /etc/carsonos/archinstall.json
+fi
+exec "${SUDO[@]}" archinstall
+EASY_ARCHINSTALL
+chmod 0755 /usr/local/bin/easy-archinstall
+
+cat > /usr/share/applications/easy-archinstall.desktop <<'EASY_ARCHINSTALL_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Easy Archinstall
+Comment=Launch the guided Arch Linux installer with CarsonOS defaults
+Exec=easy-archinstall
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+EASY_ARCHINSTALL_DESKTOP
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /etc/skel/Desktop/Easy\ Archinstall.desktop
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /home/liveuser/Desktop/Easy\ Archinstall.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Easy\ Archinstall.desktop
+
+# Refresh desktop MIME metadata after adding the installer entry.
+if command -v update-desktop-database >/dev/null 2>&1; then
+  update-desktop-database /usr/share/applications
+fi
+ "$deps_file" | sort -u)
+  if (("${#ADB_DEPENDENCIES[@]}" > 0)); then
+    pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${ADB_DEPENDENCIES[@]}"
+  fi
+done
+
+pacman --config "$AUR_PACMAN_CONFIG" -U --needed --noconfirm "${AUR_PACKAGES[@]}"
+rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$CFAN_PACKAGE" "$CFAN_DEPS" \
+  "$ADB_GRIPPER_PACKAGE" "$ADB_GRIPPER_DEPS" "$ADB_WIFI_SCANNER_PACKAGE" "$ADB_WIFI_SCANNER_DEPS" "$ADBCONTROL_PACKAGE" "$ADBCONTROL_DEPS" "$AUR_PACMAN_CONFIG"
+
+# Calamares is the preferred guided installer; archinstall remains a fallback.
+# CarsonOS preset keeps Archinstall's disk/bootloader/user choices interactive,
+# while preselecting a desktop, network manager, and graphical boot target.
+cat > /usr/local/bin/carsonos-installer <<'CARSONOS_INSTALLER'
+#!/usr/bin/env bash
+set -euo pipefail
+if command -v calamares >/dev/null 2>&1; then
+  exec sudo calamares
+fi
+if command -v archinstall >/dev/null 2>&1; then
+  if [[ -r /etc/carsonos/archinstall.json ]]; then
+    exec sudo archinstall --config /etc/carsonos/archinstall.json
+  fi
+  exec sudo archinstall
+fi
+echo "Neither Calamares nor archinstall is installed." >&2
+exit 1
+CARSONOS_INSTALLER
+chmod 0755 /usr/local/bin/carsonos-installer
+
+cat > /usr/share/applications/carsonos-installer.desktop <<'CARSONOS_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Install CarsonOS
+Comment=Install CarsonOS using the guided Arch installer
+Exec=carsonos-installer
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+CARSONOS_DESKTOP
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
+
+# Easy Archinstall is a direct, beginner-friendly shortcut to Archinstall.
+# Keep Archinstall's disk and partition choices interactive; never auto-select a target.
+cat > /usr/local/bin/easy-archinstall <<'EASY_ARCHINSTALL'
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v archinstall >/dev/null 2>&1; then
+  echo "archinstall is not installed." >&2
+  exit 127
+fi
+
+if [[ $EUID -eq 0 ]]; then
+  SUDO=()
+else
+  SUDO=(sudo)
+fi
+
+if [[ -r /etc/carsonos/archinstall.json ]]; then
+  exec "${SUDO[@]}" archinstall --config /etc/carsonos/archinstall.json
+fi
+exec "${SUDO[@]}" archinstall
+EASY_ARCHINSTALL
+chmod 0755 /usr/local/bin/easy-archinstall
+
+cat > /usr/share/applications/easy-archinstall.desktop <<'EASY_ARCHINSTALL_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Easy Archinstall
+Comment=Launch the guided Arch Linux installer with CarsonOS defaults
+Exec=easy-archinstall
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+EASY_ARCHINSTALL_DESKTOP
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /etc/skel/Desktop/Easy\ Archinstall.desktop
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /home/liveuser/Desktop/Easy\ Archinstall.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Easy\ Archinstall.desktop
+
+# Refresh desktop MIME metadata after adding the installer entry.
+if command -v update-desktop-database >/dev/null 2>&1; then
+  update-desktop-database /usr/share/applications
+fi
+
+# Calamares is the preferred guided installer; archinstall remains a fallback.
+# CarsonOS preset keeps Archinstall's disk/bootloader/user choices interactive,
+# while preselecting a desktop, network manager, and graphical boot target.
+cat > /usr/local/bin/carsonos-installer <<'CARSONOS_INSTALLER'
+#!/usr/bin/env bash
+set -euo pipefail
+if command -v calamares >/dev/null 2>&1; then
+  exec sudo calamares
+fi
+if command -v archinstall >/dev/null 2>&1; then
+  if [[ -r /etc/carsonos/archinstall.json ]]; then
+    exec sudo archinstall --config /etc/carsonos/archinstall.json
+  fi
+  exec sudo archinstall
+fi
+echo "Neither Calamares nor archinstall is installed." >&2
+exit 1
+CARSONOS_INSTALLER
+chmod 0755 /usr/local/bin/carsonos-installer
+
+cat > /usr/share/applications/carsonos-installer.desktop <<'CARSONOS_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Install CarsonOS
+Comment=Install CarsonOS using the guided Arch installer
+Exec=carsonos-installer
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+CARSONOS_DESKTOP
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
+
+# Easy Archinstall is a direct, beginner-friendly shortcut to Archinstall.
+# Keep Archinstall's disk and partition choices interactive; never auto-select a target.
+cat > /usr/local/bin/easy-archinstall <<'EASY_ARCHINSTALL'
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v archinstall >/dev/null 2>&1; then
+  echo "archinstall is not installed." >&2
+  exit 127
+fi
+
+if [[ $EUID -eq 0 ]]; then
+  SUDO=()
+else
+  SUDO=(sudo)
+fi
+
+if [[ -r /etc/carsonos/archinstall.json ]]; then
+  exec "${SUDO[@]}" archinstall --config /etc/carsonos/archinstall.json
+fi
+exec "${SUDO[@]}" archinstall
+EASY_ARCHINSTALL
+chmod 0755 /usr/local/bin/easy-archinstall
+
+cat > /usr/share/applications/easy-archinstall.desktop <<'EASY_ARCHINSTALL_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Easy Archinstall
+Comment=Launch the guided Arch Linux installer with CarsonOS defaults
+Exec=easy-archinstall
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+EASY_ARCHINSTALL_DESKTOP
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /etc/skel/Desktop/Easy\ Archinstall.desktop
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /home/liveuser/Desktop/Easy\ Archinstall.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Easy\ Archinstall.desktop
+
+# Refresh desktop MIME metadata after adding the installer entry.
+if command -v update-desktop-database >/dev/null 2>&1; then
+  update-desktop-database /usr/share/applications
+fi
+ "$CFAN_DEPS" | sort -u
+  )
+  if (("${#CFAN_DEPENDENCIES[@]}" > 0)); then
+    pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${CFAN_DEPENDENCIES[@]}"
+  fi
+  AUR_PACKAGES+=("$CFAN_PACKAGE")
+else
+  echo "Skipping optional cfan-git: it was not built successfully on the ISO builder."
 fi
 
 for deps_file in "$ADB_GRIPPER_DEPS" "$ADB_WIFI_SCANNER_DEPS" "$ADBCONTROL_DEPS"; do
