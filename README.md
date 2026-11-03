@@ -79,6 +79,10 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 - `paru` — second AUR helper, also built during ISO creation. Both helpers can install packages from the AUR; normal `pacman` package management remains available for official repositories.
 - `carsonfetch` — basic system and hardware summary, using the same white/blue/dark-gray CarsonOS ASCII banner as Fastfetch.
 - `cfan-git` — fan-control utility built from the AUR. It is installed but not configured or enabled automatically; fan support depends on the physical hardware and sensor interfaces.
+- `adb-gripper` — graphical Android device manager for common ADB tasks; requires a connected device with USB or wireless debugging authorized.
+- `adb-wifi-scanner` — scans for Android devices available through ADB wireless debugging; its command is `adbw`.
+- `adbcontrol` — Java-based ADB remote-control utility for viewing and interacting with a connected Android device.
+- `android-tools` — provides `adb` and `fastboot`, the platform tools used by the Android utilities.
 - `carson-help` — quick reference for common commands.
 - `carsonos-hyprland` — installs Hyprland and supporting Wayland tools on demand, renders the default CarsonOS wallpaper for Hyprpaper, applies the bundled Hyprland/Waybar/Wofi/Kitty theme, and disables live-session autologin so LightDM's session selector is available.
 - Cinnamon — the default desktop environment, with the original CarsonOS wallpaper.
