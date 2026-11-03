@@ -69,7 +69,8 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 7. Cinnamon is the default desktop and uses the original CarsonOS wallpaper. The desktop shortcut **Cinnamon Desktop** opens the Cinnamon session.
 8. Double-click **Easy Archinstall** to launch Archinstall with CarsonOS defaults in a terminal. Review every disk and partition choice carefully before confirming.
 9. Double-click **Install Hyprland** to install the optional Hyprland/Wayland desktop and the CarsonOS rice (Waybar pinned to the bottom, matching Wofi/Kitty styling, and the default CarsonOS wallpaper rendered for Hyprpaper). Then log out and select **Hyprland** from the LightDM session menu. The live session resets installed packages on reboot.
-10. Double-click **Install CarsonOS** to launch Calamares. The installer is built from the AUR during ISO creation and remains experimental until a full install test passes. Test only in a disposable VM; installation can erase data.
+10. Double-click **Install CarsonOS** to launch Calamares. The installer is built from the AUR during ISO creation and remains experimental until a full install test passes. Test recommended only in a disposable VM; installation can erase data.
+11. or use archinstall or easy-archinstall they're the same thing just easy-archinstall is faster to run. 
 
 ## Included CarsonOS tools
 
