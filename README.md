@@ -78,6 +78,7 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 - `yay` — AUR helper built during the ISO customization step. AUR packages are community-maintained; review PKGBUILDs before installing packages.
 - `carsonfetch` — basic system and hardware summary, using the same white/blue/dark-gray CarsonOS ASCII banner as Fastfetch.
 - `bashful` — Go-based YAML task runner built from the AUR during ISO creation; it is a scripting/build utility, not a system-information fetch app.
+- `cfan-git` — fan-control utility built from the AUR. It is installed but not configured or enabled automatically; fan support depends on the physical hardware and sensor interfaces.
 - `carson-help` — quick reference for common commands.
 - `carsonos-hyprland` — installs Hyprland and supporting Wayland tools on demand, renders the default CarsonOS wallpaper for Hyprpaper, applies the bundled Hyprland/Waybar/Wofi/Kitty theme, and disables live-session autologin so LightDM's session selector is available.
 - Cinnamon — the default desktop environment, with the original CarsonOS wallpaper.
