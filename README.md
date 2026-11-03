@@ -95,12 +95,13 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 - [x] Build the ISO successfully in GitHub Actions.
 - [x] Boot the live desktop in VirtualBox and verify the CarsonOS wallpaper.
 - [x] Add an optional Hyprland setup script and a CarsonOS-themed Waybar pinned to the bottom.
-- [ ] Test booting in both BIOS and UEFI modes.
-- [ ] Verify networking, sound, display settings, and the installer entry.
-- [ ] Complete fresh-install and reboot testing.
-- [ ] Ensure the installed system receives CarsonOS branding and desktop defaults.
-- [ ] Test the AUR-built Calamares installer end-to-end, including partitioning, filesystem setup, bootloader installation, and first boot.
-- [ ] Publish a clearly labelled preview ISO with known issues and installation notes.
+- [x] Test booting in both BIOS and UEFI modes.
+- [x] Verify networking, sound, display settings, and the installer entry.
+- [x] Complete fresh-install and reboot testing.
+- [x] Ensure the installed system receives CarsonOS branding and desktop defaults.
+- [x] Test the AUR-built Calamares installer end-to-end, including partitioning, filesystem setup, bootloader installation, and first boot.
+- [x] Publish a clearly labelled preview ISO with known issues and installation notes.
+- [ ] test easy-archinstall 
 
 ## Updates and maintenance
 
