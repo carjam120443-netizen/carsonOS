@@ -345,15 +345,6 @@ chown liveuser:liveuser /home/liveuser/Desktop/Easy\ Archinstall.desktop
 if command -v update-desktop-database >/dev/null 2>&1; then
   update-desktop-database /usr/share/applications
 fi
- "$BRAVE_ORIGIN_DEPS" | sort -u
-)
-if (("${#BRAVE_ORIGIN_DEPENDENCIES[@]}" > 0)); then
-  pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${BRAVE_ORIGIN_DEPENDENCIES[@]}"
-fi
-
-pacman --config "$AUR_PACMAN_CONFIG" -U --needed --noconfirm \
-  "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$BRAVE_ORIGIN_PACKAGE"
-rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$AUR_PACMAN_CONFIG"
 
 # Calamares is the preferred guided installer; archinstall remains a fallback.
 # CarsonOS preset keeps Archinstall's disk/bootloader/user choices interactive,
