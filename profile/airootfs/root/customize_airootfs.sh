@@ -182,7 +182,23 @@ chmod 0755 /usr/local/bin/carsonos-hyprland /usr/local/bin/carsonos-cinnamon
 chown -R liveuser:liveuser /home/liveuser/Desktop
 cp /etc/skel/.bashrc /home/liveuser/.bashrc
 cp /etc/skel/.bashrc.carsonos /home/liveuser/.bashrc.carsonos
-install -d -m 0755 /home/liveuser/.config
+install -d -m 0755 /etc/skel/.config /home/liveuser/.config
+# Prefer Brave Origin for HTTP(S) links and HTML documents in the live session
+# and for accounts created later from /etc/skel. Firefox remains available as an alternative.
+cat > /etc/skel/.config/mimeapps.list <<'BRAVE_MIMEAPPS'
+[Default Applications]
+x-scheme-handler/http=brave-origin.desktop;
+x-scheme-handler/https=brave-origin.desktop;
+text/html=brave-origin.desktop;
+application/xhtml+xml=brave-origin.desktop;
+
+[Added Associations]
+x-scheme-handler/http=brave-origin.desktop;
+x-scheme-handler/https=brave-origin.desktop;
+text/html=brave-origin.desktop;
+application/xhtml+xml=brave-origin.desktop;
+BRAVE_MIMEAPPS
+install -m 0644 /etc/skel/.config/mimeapps.list /home/liveuser/.config/mimeapps.list
 cp -a /etc/skel/.config/fastfetch /home/liveuser/.config/
 cp -a /etc/skel/.config/hypr /home/liveuser/.config/
 cp -a /etc/skel/.config/waybar /home/liveuser/.config/
@@ -206,8 +222,10 @@ YAY_PACKAGE="/root/yay.pkg.tar.zst"
 PARU_PACKAGE="/root/paru.pkg.tar.zst"
 CALAMARES_PACKAGE="/root/calamares.pkg.tar.zst"
 CALAMARES_DEPS="/root/calamares-runtime-deps.txt"
+BRAVE_ORIGIN_PACKAGE="/root/brave-origin-bin.pkg.tar.zst"
+BRAVE_ORIGIN_DEPS="/root/brave-origin-runtime-deps.txt"
 
-for staged_file in "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS"; do
+for staged_file in "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS"; do
   if [[ ! -f "$staged_file" ]]; then
     echo "Missing staged build file: $staged_file. Build the ISO with scripts/build-iso.sh." >&2
     exit 1
@@ -238,9 +256,96 @@ if (("${#CALAMARES_DEPENDENCIES[@]}" > 0)); then
   pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${CALAMARES_DEPENDENCIES[@]}"
 fi
 
+mapfile -t BRAVE_ORIGIN_DEPENDENCIES < <(
+  grep -E '^[a-zA-Z0-9@._+-]+
+
+# Calamares is the preferred guided installer; archinstall remains a fallback.
+# CarsonOS preset keeps Archinstall's disk/bootloader/user choices interactive,
+# while preselecting a desktop, network manager, and graphical boot target.
+cat > /usr/local/bin/carsonos-installer <<'CARSONOS_INSTALLER'
+#!/usr/bin/env bash
+set -euo pipefail
+if command -v calamares >/dev/null 2>&1; then
+  exec sudo calamares
+fi
+if command -v archinstall >/dev/null 2>&1; then
+  if [[ -r /etc/carsonos/archinstall.json ]]; then
+    exec sudo archinstall --config /etc/carsonos/archinstall.json
+  fi
+  exec sudo archinstall
+fi
+echo "Neither Calamares nor archinstall is installed." >&2
+exit 1
+CARSONOS_INSTALLER
+chmod 0755 /usr/local/bin/carsonos-installer
+
+cat > /usr/share/applications/carsonos-installer.desktop <<'CARSONOS_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Install CarsonOS
+Comment=Install CarsonOS using the guided Arch installer
+Exec=carsonos-installer
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+CARSONOS_DESKTOP
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
+
+# Easy Archinstall is a direct, beginner-friendly shortcut to Archinstall.
+# Keep Archinstall's disk and partition choices interactive; never auto-select a target.
+cat > /usr/local/bin/easy-archinstall <<'EASY_ARCHINSTALL'
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v archinstall >/dev/null 2>&1; then
+  echo "archinstall is not installed." >&2
+  exit 127
+fi
+
+if [[ $EUID -eq 0 ]]; then
+  SUDO=()
+else
+  SUDO=(sudo)
+fi
+
+if [[ -r /etc/carsonos/archinstall.json ]]; then
+  exec "${SUDO[@]}" archinstall --config /etc/carsonos/archinstall.json
+fi
+exec "${SUDO[@]}" archinstall
+EASY_ARCHINSTALL
+chmod 0755 /usr/local/bin/easy-archinstall
+
+cat > /usr/share/applications/easy-archinstall.desktop <<'EASY_ARCHINSTALL_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Easy Archinstall
+Comment=Launch the guided Arch Linux installer with CarsonOS defaults
+Exec=easy-archinstall
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+EASY_ARCHINSTALL_DESKTOP
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /etc/skel/Desktop/Easy\ Archinstall.desktop
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /home/liveuser/Desktop/Easy\ Archinstall.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Easy\ Archinstall.desktop
+
+# Refresh desktop MIME metadata after adding the installer entry.
+if command -v update-desktop-database >/dev/null 2>&1; then
+  update-desktop-database /usr/share/applications
+fi
+ "$BRAVE_ORIGIN_DEPS" | sort -u
+)
+if (("${#BRAVE_ORIGIN_DEPENDENCIES[@]}" > 0)); then
+  pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${BRAVE_ORIGIN_DEPENDENCIES[@]}"
+fi
+
 pacman --config "$AUR_PACMAN_CONFIG" -U --needed --noconfirm \
-  "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE"
-rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$AUR_PACMAN_CONFIG"
+  "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$BRAVE_ORIGIN_PACKAGE"
+rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$AUR_PACMAN_CONFIG"
 
 # Calamares is the preferred guided installer; archinstall remains a fallback.
 # CarsonOS preset keeps Archinstall's disk/bootloader/user choices interactive,
