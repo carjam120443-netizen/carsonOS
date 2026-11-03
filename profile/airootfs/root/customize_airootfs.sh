@@ -334,9 +334,9 @@ Terminal=true
 Categories=System;
 StartupNotify=true
 CARSONOS_DESKTOP
-install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\\ CarsonOS.desktop
-install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\\ CarsonOS.desktop
-chown liveuser:liveuser /home/liveuser/Desktop/Install\\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
+install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
+chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
 
 # Easy Archinstall is a direct, beginner-friendly shortcut to Archinstall.
 # Keep Archinstall's disk and partition choices interactive; never auto-select a target.
