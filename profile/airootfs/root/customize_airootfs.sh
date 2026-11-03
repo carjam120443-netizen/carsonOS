@@ -277,6 +277,45 @@ install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Des
 install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
 chown liveuser:liveuser /home/liveuser/Desktop/Install\ CarsonOS.desktop
 
+# Easy Archinstall is a direct, beginner-friendly shortcut to Archinstall.
+# Keep Archinstall's disk and partition choices interactive; never auto-select a target.
+cat > /usr/local/bin/easy-archinstall <<'EASY_ARCHINSTALL'
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v archinstall >/dev/null 2>&1; then
+  echo "archinstall is not installed." >&2
+  exit 127
+fi
+
+if [[ $EUID -eq 0 ]]; then
+  SUDO=()
+else
+  SUDO=(sudo)
+fi
+
+if [[ -r /etc/carsonos/archinstall.json ]]; then
+  exec "${SUDO[@]}" archinstall --config /etc/carsonos/archinstall.json
+fi
+exec "${SUDO[@]}" archinstall
+EASY_ARCHINSTALL
+chmod 0755 /usr/local/bin/easy-archinstall
+
+cat > /usr/share/applications/easy-archinstall.desktop <<'EASY_ARCHINSTALL_DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Easy Archinstall
+Comment=Launch the guided Arch Linux installer with CarsonOS defaults
+Exec=easy-archinstall
+Icon=system-software-install
+Terminal=true
+Categories=System;
+StartupNotify=true
+EASY_ARCHINSTALL_DESKTOP
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /etc/skel/Desktop/Easy\ Archinstall.desktop
+install -m 0755 /usr/share/applications/easy-archinstall.desktop /home/liveuser/Desktop/Easy\ Archinstall.desktop
+chown liveuser:live /home/liveuser/Desktop/Easy\ Archinstall.desktop
+
 # Refresh desktop MIME metadata after adding the installer entry.
 if command -v update-desktop-database >/dev/null 2>&1; then
   update-desktop-database /usr/share/applications
