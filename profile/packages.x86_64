@@ -83,7 +83,7 @@ nano
 
 # Browser, fonts, and audio
 firefox
-# Brave Origin (brave-origin-bin) is built from the AUR by scripts/build-iso.sh.
+# Brave Origin (brave-origin-bin) and Bashful are built from the AUR by scripts/build-iso.sh.
 ttf-dejavu
 noto-fonts
 noto-fonts-cjk
