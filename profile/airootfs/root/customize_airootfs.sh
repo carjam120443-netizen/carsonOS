@@ -224,8 +224,10 @@ CALAMARES_PACKAGE="/root/calamares.pkg.tar.zst"
 CALAMARES_DEPS="/root/calamares-runtime-deps.txt"
 BRAVE_ORIGIN_PACKAGE="/root/brave-origin-bin.pkg.tar.zst"
 BRAVE_ORIGIN_DEPS="/root/brave-origin-runtime-deps.txt"
+CFAN_PACKAGE="/root/cfan-git.pkg.tar.zst"
+CFAN_DEPS="/root/cfan-git-runtime-deps.txt"
 
-for staged_file in "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS"; do
+for staged_file in "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$CFAN_PACKAGE" "$CFAN_DEPS"; do
   if [[ ! -f "$staged_file" ]]; then
     echo "Missing staged build file: $staged_file. Build the ISO with scripts/build-iso.sh." >&2
     exit 1
@@ -263,9 +265,16 @@ if (("${#BRAVE_ORIGIN_DEPENDENCIES[@]}" > 0)); then
   pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${BRAVE_ORIGIN_DEPENDENCIES[@]}"
 fi
 
+mapfile -t CFAN_DEPENDENCIES < <(
+  grep -E "^[a-zA-Z0-9@._+-]+$" "$CFAN_DEPS" | sort -u
+)
+if (("${#CFAN_DEPENDENCIES[@]}" > 0)); then
+  pacman --config "$AUR_PACMAN_CONFIG" -S --needed --noconfirm "${CFAN_DEPENDENCIES[@]}"
+fi
+
 pacman --config "$AUR_PACMAN_CONFIG" -U --needed --noconfirm \
-  "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$BRAVE_ORIGIN_PACKAGE"
-rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$AUR_PACMAN_CONFIG"
+  "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$BRAVE_ORIGIN_PACKAGE" "$CFAN_PACKAGE"
+rm -f "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$CFAN_PACKAGE" "$CFAN_DEPS" "$AUR_PACMAN_CONFIG"
 
 # Calamares is the preferred guided installer; archinstall remains a fallback.
 # CarsonOS preset keeps Archinstall's disk/bootloader/user choices interactive,
