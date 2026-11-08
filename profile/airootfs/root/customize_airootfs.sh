@@ -373,9 +373,9 @@ Terminal=true
 Categories=System;
 StartupNotify=true
 EASY_ARCHINSTALL_DESKTOP
-install -m 0755 /usr/share/applications/easy-archinstall.desktop /etc/skel/Desktop/Easy\\ Archinstall.desktop
-install -m 0755 /usr/share/applications/easy-archinstall.desktop /home/liveuser/Desktop/Easy\\ Archinstall.desktop
-chown liveuser:liveuser /home/liveuser/Desktop/Easy\\ Archinstall.desktop
+install -m 0755 /usr/share/applications/easy-archinstall.desktop "/etc/skel/Desktop/Easy Archinstall.desktop"
+install -m 0755 /usr/share/applications/easy-archinstall.desktop "/home/liveuser/Desktop/Easy Archinstall.desktop"
+chown liveuser:liveuser "/home/liveuser/Desktop/Easy Archinstall.desktop"
 
 # Refresh desktop MIME metadata after adding the installer entries.
 if command -v update-desktop-database >/dev/null 2>&1; then
