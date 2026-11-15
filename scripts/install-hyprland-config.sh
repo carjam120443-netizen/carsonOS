@@ -73,16 +73,17 @@ apply_to_home() {
     chown "$owner" "$destination"
   done
 
-  local wallpaper_destination="/usr/share/backgrounds/carsonos"
-  install -d -m 0755 "$wallpaper_destination"
-  for wallpaper in default.svg default.png; do
-    backup_if_present "$wallpaper_destination/$wallpaper"
-    install -m 0644 "$WALLPAPER_DIR/$wallpaper" "$wallpaper_destination/$wallpaper"
-  done
-
   chown -R "$owner" "$home/.config/hypr" "$home/.config/waybar" \
     "$home/.config/wofi" "$home/.config/kitty" "$home/.config/swaync"
 }
+
+# Install the system-wide wallpaper once.
+WALLPAPER_DESTINATION="/usr/share/backgrounds/carsonos"
+install -d -m 0755 "$WALLPAPER_DESTINATION"
+for wallpaper in default.svg default.png; do
+  backup_if_present "$WALLPAPER_DESTINATION/$wallpaper"
+  install -m 0644 "$WALLPAPER_DIR/$wallpaper" "$WALLPAPER_DESTINATION/$wallpaper"
+done
 
 # Seed future user accounts.
 apply_to_home "/etc/skel" "root:root"
@@ -90,7 +91,8 @@ apply_to_home "/etc/skel" "root:root"
 # Apply the same desktop to regular user accounts already created by Archinstall.
 while IFS=: read -r username home; do
   [[ -d "$home" ]] || continue
-  apply_to_home "$home" "$username:$username"
+  primary_group="$(id -gn "$username")"
+  apply_to_home "$home" "$username:$primary_group"
 done < <(getent passwd | awk -F: '$3 >= 1000 && $3 < 60000 && $6 ~ /^\/home\// { print $1 ":" $6 }')
 
 echo "CarsonOS Hyprland configuration and wallpaper installed."
