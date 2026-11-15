@@ -1,9 +1,9 @@
 [Desktop Entry]
 Type=Application
-Name=Cinnamon Desktop
-Comment=Open the Cinnamon desktop session
-Exec=cinnamon-session
-Icon=desktop
+Name=Switch to Cinnamon
+Comment=Choose the Cinnamon fallback at the next login
+Exec=xfce4-terminal --hold --title=CarsonOS-Cinnamon --command=carsonos-cinnamon
+Icon=preferences-desktop-display
 Terminal=false
 Categories=System;Settings;
 StartupNotify=true
