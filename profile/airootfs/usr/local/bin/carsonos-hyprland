@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# Install and configure CarsonOS's optional, bottom-bar-first Hyprland desktop.
+# Repair and configure CarsonOS's default Hyprland desktop.
 # Safe to run repeatedly. This changes only the current live/installed system.
 
 if [[ ${EUID} -ne 0 ]]; then
@@ -25,6 +25,11 @@ pacman -Syu --needed --noconfirm \
   wofi \
   kitty \
   hyprpaper \
+  hypridle \
+  hyprlock \
+  swaync \
+  cliphist \
+  nwg-look \
   polkit-kde-agent \
   qt5-wayland \
   qt6-wayland \
@@ -62,7 +67,7 @@ if [[ -z "$TARGET_HOME" || ! -d "$TARGET_HOME" ]]; then
   exit 1
 fi
 
-for config_dir in hypr waybar kitty wofi; do
+for config_dir in hypr waybar kitty wofi swaync; do
   if [[ -d "/etc/skel/.config/$config_dir" ]]; then
     install -d -o "$TARGET_USER" -g "$TARGET_USER" "$TARGET_HOME/.config/$config_dir"
     cp -a "/etc/skel/.config/$config_dir/." "$TARGET_HOME/.config/$config_dir/"
@@ -78,7 +83,7 @@ if [[ -f "$TARGET_HOME/.config/hypr/hyprpaper.conf" ]]; then
 fi
 
 # LightDM autologin hides the session selector. Disable only its autologin
-# settings so the user can choose Hyprland; leave the default desktop unchanged.
+# settings when this helper is run, allowing the user to choose Hyprland or Cinnamon.
 LIGHTDM_CONF=/etc/lightdm/lightdm.conf.d/50-carsonos.conf
 if [[ -f "$LIGHTDM_CONF" ]]; then
   sed -i \
@@ -88,10 +93,10 @@ if [[ -f "$LIGHTDM_CONF" ]]; then
 fi
 
 echo
-echo "Hyprland is installed and the CarsonOS rice is configured."
+echo "Hyprland is installed and the CarsonOS desktop configuration is restored."
 echo "1. Log out of the current desktop."
-echo "2. In LightDM, open the session menu and choose Hyprland."
-echo "3. Log in. The CarsonOS wallpaper and bottom Waybar should appear."
+echo "2. In LightDM, choose Hyprland from the session menu."
+echo "3. Log in. Hyprland is the default CarsonOS desktop; Cinnamon remains available as a fallback."
 echo
 echo "Keyboard shortcuts:"
 echo "  Super + Enter       Terminal"
