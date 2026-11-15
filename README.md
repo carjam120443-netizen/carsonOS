@@ -98,6 +98,23 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 
 CarsonOS uses an original, CarsonOS-branded Hyprland configuration rather than copying a full third-party desktop installer. The design and package research were informed by [LinuxBeginnings/Hyprland-Dots](https://github.com/LinuxBeginnings/Hyprland-Dots), the maintained continuation of JaKooLit's Hyprland dotfiles. The CarsonOS configuration is tailored to the project's wallpaper, emerald/ice-blue palette, bottom Waybar, and live-image workflow.
 
+The compositor config uses Hyprland's current Lua API (Hyprland 0.55 and newer). The Archinstall post-install hook downloads these same CarsonOS config files and wallpaper, backs up matching existing files, and applies them to regular user accounts. Calamares desktop deployment remains unverified.
+
+### Default keyboard shortcuts
+
+| Shortcut | Action |
+| --- | --- |
+| `Super + Enter` | Open Kitty terminal |
+| `Super + D` | Open the application launcher |
+| `Super + E` | Open Thunar |
+| `Super + Q` | Close the active window |
+| `Super + V` | Open clipboard history |
+| `Super + N` | Toggle notifications |
+| `Super + Shift + L` | Lock the screen |
+| `Super + Shift + M` | Open the power menu |
+| `Super + 1–5` | Switch workspaces |
+| `Super + Shift + 1–5` | Move the active window to a workspace |
+
 ## Development roadmap
 
 - [x] Add an initial archiso profile for BIOS and UEFI boot.
