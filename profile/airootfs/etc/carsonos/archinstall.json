@@ -4,6 +4,8 @@
     "type": "nm"
   },
   "packages": [
+    "librsvg",
+    "curl",
     "networkmanager",
     "network-manager-applet",
     "hyprland",
@@ -72,7 +74,8 @@
   "custom_commands": [
     "install -d -m 0755 /etc/lightdm/lightdm.conf.d && printf '[Seat:*]\\nuser-session=hyprland\\ngreeter-session=lightdm-gtk-greeter\\n' > /etc/lightdm/lightdm.conf.d/50-carsonos.conf",
     "systemctl enable NetworkManager.service lightdm.service systemd-timesyncd.service",
-    "systemctl set-default graphical.target"
+    "systemctl set-default graphical.target",
+    "curl -fsSL https://raw.githubusercontent.com/carjam120443-netizen/carsonOS/main/scripts/install-hyprland-config.sh -o /tmp/carsonos-apply-hyprland-config.sh && bash /tmp/carsonos-apply-hyprland-config.sh && rm -f /tmp/carsonos-apply-hyprland-config.sh"
   ],
   "ntp": true
 }
