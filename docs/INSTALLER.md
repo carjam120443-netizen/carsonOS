@@ -21,7 +21,7 @@ Calamares is built from the AUR as part of the ISO build, so the build needs int
 
 - Calamares is AUR-built and included, but its installation configuration and desktop package selection have not yet been verified end-to-end. Treat it as experimental; the Archinstall fallback is the currently configured Hyprland install path.
 - The `archinstall` fallback now loads `/etc/carsonos/archinstall.json`. It preselects Hyprland, LightDM, NetworkManager, and a graphical boot target, while also installing Cinnamon as an optional fallback. Disk layout, bootloader, and user choices remain for the installer to confirm. Review every selection; this preset does not make installation risk-free.
-- The Archinstall preset configures NetworkManager for the installed system and enables the graphical login. It cannot fix a disconnected VirtualBox adapter or an unavailable mirror during installation; the live environment must have working internet for package downloads.
+- The Archinstall preset configures NetworkManager and LightDM, then fetches the current CarsonOS Hyprland dotfiles from GitHub in the installed system. Matching existing config files are backed up before replacement. Internet access is required for this final theming step; if the download fails, the install continues and Hyprland can still generate its default config.
 - For UEFI installs, choose a suitable UEFI bootloader in `archinstall`; the live ISO uses systemd-boot for UEFI and Syslinux for BIOS.
 - The ISO profile and preset still need a fresh build and a complete disposable-VM install test before being considered verified.
 - Live-session users and settings are not automatically copied into the installed system; the preset installs the main desktop/network components separately.
