@@ -30,7 +30,7 @@ pacman -Syu --needed --noconfirm \
   swaync \
   cliphist \
   nwg-look \
-  polkit-kde-agent \
+  hyprpolkitagent \
   qt5-wayland \
   qt6-wayland \
   grim \
