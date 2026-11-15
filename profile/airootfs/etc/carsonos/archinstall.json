@@ -6,6 +6,29 @@
   "packages": [
     "networkmanager",
     "network-manager-applet",
+    "hyprland",
+    "waybar",
+    "wofi",
+    "kitty",
+    "hyprpaper",
+    "hypridle",
+    "hyprlock",
+    "swaync",
+    "cliphist",
+    "xdg-desktop-portal",
+    "xdg-desktop-portal-hyprland",
+    "xdg-desktop-portal-gtk",
+    "polkit-kde-agent",
+    "qt5-wayland",
+    "qt6-wayland",
+    "grim",
+    "slurp",
+    "wl-clipboard",
+    "brightnessctl",
+    "playerctl",
+    "wlogout",
+    "nwg-look",
+    "ttf-jetbrains-mono-nerd",
     "cinnamon",
     "cinnamon-translations",
     "nemo",
@@ -15,10 +38,10 @@
     "pipewire",
     "pipewire-pulse",
     "wireplumber",
-    "polkit-gnome",
     "xdg-user-dirs",
     "xdg-utils",
     "gvfs",
+    "thunar",
     "firefox",
     "fastfetch",
     "exfat-utils",
@@ -27,6 +50,7 @@
   ],
   "services": [
     "NetworkManager.service",
+    "lightdm.service",
     "systemd-timesyncd.service"
   ],
   "profile_config": {
@@ -35,12 +59,17 @@
     "profile": {
       "main": "Desktop",
       "details": [
-        "Cinnamon"
-      ]
+        "Hyprland"
+      ],
+      "custom_settings": {
+        "Hyprland": {
+          "seat_access": "polkit"
+        }
+      }
     }
   },
   "custom_commands": [
-    "install -d -m 0755 /etc/lightdm/lightdm.conf.d && printf '[Seat:*]\\nuser-session=cinnamon\\ngreeter-session=lightdm-gtk-greeter\\n' > /etc/lightdm/lightdm.conf.d/50-carsonos.conf",
+    "install -d -m 0755 /etc/lightdm/lightdm.conf.d && printf '[Seat:*]\\nuser-session=hyprland\\ngreeter-session=lightdm-gtk-greeter\\n' > /etc/lightdm/lightdm.conf.d/50-carsonos.conf",
     "systemctl enable NetworkManager.service lightdm.service systemd-timesyncd.service",
     "systemctl set-default graphical.target"
   ],
