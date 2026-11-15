@@ -184,7 +184,7 @@ install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Des
 install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
 install -m 0644 /usr/share/applications/carsonos-hyprland.desktop /home/liveuser/Desktop/Hyprland Setup.desktop
 install -m 0644 /usr/share/applications/carsonos-cinnamon.desktop /home/liveuser/Desktop/Install\ Cinnamon.desktop
-chmod 0755 /usr/local/bin/carsonos-hyprland /usr/local/bin/carsonos-cinnamon
+chmod 0755 /usr/local/bin/carsonos-hyprland /usr/local/bin/carsonos-cinnamon /usr/local/bin/carsonos-power-menu
 chown -R liveuser:liveuser /home/liveuser/Desktop
 cp /etc/skel/.bashrc /home/liveuser/.bashrc
 cp /etc/skel/.bashrc.carsonos /home/liveuser/.bashrc.carsonos
