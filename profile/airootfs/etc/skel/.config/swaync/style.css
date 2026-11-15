@@ -1,0 +1,60 @@
+/* CarsonOS notification center — dark glass with emerald/ice-blue accents. */
+* {
+  font-family: "JetBrainsMono Nerd Font", "Noto Sans", sans-serif;
+  font-size: 12px;
+}
+
+.control-center {
+  background: rgba(7, 17, 29, 0.97);
+  color: #e6f4f1;
+  border: 1px solid rgba(76, 255, 145, 0.55);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.notification {
+  background: #101d2a;
+  color: #e6f4f1;
+  border: 1px solid rgba(53, 184, 255, 0.28);
+  border-radius: 12px;
+  margin: 6px;
+  padding: 10px;
+}
+
+.notification-content {
+  padding: 4px;
+}
+
+.summary {
+  color: #4cff91;
+  font-weight: 700;
+}
+
+.body {
+  color: #c5d6df;
+}
+
+.widget-title {
+  color: #4cff91;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 8px;
+}
+
+.widget-dnd {
+  color: #35b8ff;
+  margin: 8px;
+}
+
+button {
+  background: #162938;
+  color: #e6f4f1;
+  border: 1px solid #284553;
+  border-radius: 9px;
+  padding: 7px 12px;
+}
+
+button:hover {
+  background: #203b4b;
+  border-color: #4cff91;
+}
