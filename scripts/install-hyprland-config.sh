@@ -40,6 +40,11 @@ for relative_path in "${CONFIG_FILES[@]}"; do
     --output "$destination"
 done
 
+POWER_MENU="$TMP_DIR/carsonos-power-menu"
+curl --fail --silent --show-error --location \
+  "$BASE_URL/profile/airootfs/usr/local/bin/carsonos-power-menu" \
+  --output "$POWER_MENU"
+
 WALLPAPER_DIR="$TMP_DIR/wallpaper"
 install -d -m 0755 "$WALLPAPER_DIR"
 curl --fail --silent --show-error --location \
@@ -77,7 +82,7 @@ apply_to_home() {
     "$home/.config/wofi" "$home/.config/kitty" "$home/.config/swaync"
 }
 
-# Install the system-wide wallpaper once.
+# Install the native CarsonOS power menu.\ninstall -m 0755 "$POWER_MENU" /usr/local/bin/carsonos-power-menu\n\n# Install the system-wide wallpaper once.
 WALLPAPER_DESTINATION="/usr/share/backgrounds/carsonos"
 install -d -m 0755 "$WALLPAPER_DESTINATION"
 for wallpaper in default.svg default.png; do
