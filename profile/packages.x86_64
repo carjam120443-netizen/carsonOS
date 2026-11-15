@@ -12,6 +12,7 @@ amd-ucode
 intel-ucode
 sudo
 git
+curl
 nano
 vim
 bash-completion
