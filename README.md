@@ -5,13 +5,13 @@
 <img src="https://cdn-icons-png.flaticon.com/512/518/518713.png" alt="linux logo" width="40" height="40" align="right" />
  > ## because arch needs to be simpler sometimes 
  
-CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with original Carson branding, a ready-to-use Cinnamon desktop, and a live ISO that boots on a computer and provides an installation entry point.
+CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with original Carson branding, a ready-to-use Hyprland desktop, and a live ISO that boots on a computer and provides an installation entry point.
 
-> **Project status:** Early development. The ISO builds in GitHub Actions and has booted to the CarsonOS live desktop in VirtualBox. Networking, `pacman`, official-repository package installation, and AUR package installation through the included `yay` and `paru` helpers have been tested and work. The optional Hyprland path is still being tested. Calamares is built from the AUR during ISO creation and is the default installer, with `archinstall` retained as a fallback. Both installation paths remain experimental until a fresh ISO is built and a complete install is tested.
+> **Project status:** Early development. The ISO builds in GitHub Actions and has booted to the CarsonOS live desktop in VirtualBox. Networking, `pacman`, official-repository package installation, and AUR package installation through the included `yay` and `paru` helpers have been tested and work. The Hyprland live-session defaults and installed-system preset are now included; both still need a fresh ISO build and complete install test. Calamares is built from the AUR during ISO creation and is the default installer, with `archinstall` retained as a fallback. Both installation paths remain experimental until a fresh ISO is built and a complete install is tested.
 
 ## Goals
 
-- Boot into a usable live Cinnamon desktop from USB or a virtual machine.
+- Boot into a usable live Hyprland desktop from USB or a virtual machine.
 - Provide a clear path from the live environment to an installed system.
 - Keep Arch Linux's standard package-management workflow with `pacman`.
 - Add original CarsonOS wallpaper, terminal styling, and system information tools.
@@ -23,15 +23,15 @@ CarsonOS aims to make Arch Linux approachable as a daily desktop OS, with origin
 | --- | --- |
 | Base | Arch Linux, x86_64 |
 | Live image | `archiso` profile in `profile/` |
-| Desktop | Cinnamon (default); XFCE tools retained for compatibility |
-| Display manager | LightDM with automatic login in the live session |
+| Desktop | Hyprland (default); Cinnamon fallback; XFCE tools retained for compatibility |
+| Display manager | LightDM with automatic login to Hyprland in the live session |
 | Networking | NetworkManager and its XFCE-friendly tray applet |
 | Audio | PipeWire, WirePlumber, PulseAudio compatibility, and volume controls |
 | Init and services | systemd |
 | Bootloader | systemd-boot for UEFI (the maintained successor to gummiboot); Syslinux for BIOS |
 | Package management | `pacman`, official Arch repositories, and the AUR helpers `yay` and `paru`, built from their AUR PKGBUILDs |
 | System information | `fastfetch` with a custom CarsonOS ASCII logo, shown when a terminal opens |
-| Optional desktops | Hyprland; Cinnamon is the default desktop |
+| Optional desktops | Cinnamon fallback; Hyprland is the default desktop |
 | Installer | Calamares from the AUR, with `archinstall` as a fallback |
 | Initial testing | VirtualBox, then selected physical test systems |
 
@@ -63,12 +63,12 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 1. Create a new VirtualBox VM with a 64-bit Linux profile and a disposable virtual disk.
 2. Attach the generated ISO as the optical drive.
 3. Boot the VM and choose **CarsonOS Live Desktop**.
-4. The intended live session uses Cinnamon, LightDM, NetworkManager, the volume controls, and the CarsonOS wallpaper and terminal helpers.
+4. The live session starts directly in Hyprland, with LightDM, NetworkManager, PipeWire audio, the CarsonOS wallpaper, Waybar, Wofi, Kitty, notifications, and clipboard history.
 5. Use the NetworkManager tray icon to connect to Wi-Fi or inspect wired networking. Networking has been tested in the live environment.
 6. Open a terminal: Fastfetch displays the custom CarsonOS ASCII logo. Use `pacman` for official repository packages, or `yay` / `paru` for AUR packages. Package installation through these tools has been tested.
-7. Cinnamon is the default desktop and uses the original CarsonOS wallpaper. The desktop shortcut **Cinnamon Desktop** opens the Cinnamon session.
+7. Hyprland is the default desktop and uses the original CarsonOS wallpaper. Use **Switch to Cinnamon** to expose LightDM's session chooser and select the optional Cinnamon fallback.
 8. Double-click **Easy Archinstall** to launch Archinstall with CarsonOS defaults in a terminal. Review every disk and partition choice carefully before confirming.
-9. Double-click **Install Hyprland** to try the optional Hyprland/Wayland desktop and CarsonOS theme (Waybar pinned to the bottom, matching Wofi/Kitty styling, and the default CarsonOS wallpaper rendered for Hyprpaper). This path is still being tested; the live session resets installed packages on reboot.
+9. The **Hyprland Setup** shortcut restores the CarsonOS Hyprland configuration and exposes LightDM's session chooser. Hyprland is already installed and selected by default; the live session resets package changes on reboot.
 10. Double-click **Install CarsonOS** to launch Calamares. The installer is built from the AUR during ISO creation and remains experimental until a full install test passes. Test recommended only in a disposable VM; installation can erase data.
 11. or use archinstall or easy-archinstall they're the same thing just easy-archinstall is faster to run. 
 
@@ -87,24 +87,30 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 - `activity-log-manager` — graphical utility for viewing and managing activity log settings.
 - `dash` — lightweight POSIX-compliant command shell.
 - `carson-help` — quick reference for common commands.
-- `carsonos-hyprland` — installs Hyprland and supporting Wayland tools on demand, renders the default CarsonOS wallpaper for Hyprpaper, applies the bundled Hyprland/Waybar/Wofi/Kitty theme, and disables live-session autologin so LightDM's session selector is available.
-- Cinnamon — the default desktop environment, with the original CarsonOS wallpaper.
+- `carsonos-hyprland` — restores the default Hyprland package set and CarsonOS configuration, renders the default wallpaper for Hyprpaper, and exposes LightDM's session chooser when requested.
+- Cinnamon — optional fallback desktop, selectable from LightDM after using **Switch to Cinnamon**.
 - Brave Origin — the default browser for HTTP/HTTPS links and HTML files; Firefox remains available as an alternative.
 - `carsonos-installer` — launches Calamares, falling back to `archinstall` if needed.
 - `easy-archinstall` — launches Archinstall directly with the CarsonOS preset when available; the **Easy Archinstall** desktop shortcut opens it in a terminal. Disk and partition choices remain interactive.
 - `update-system` — shell alias for a full `pacman -Syu` system update.
 
+## Hyprland configuration
+
+CarsonOS uses an original, CarsonOS-branded Hyprland configuration rather than copying a full third-party desktop installer. The design and package research were informed by [LinuxBeginnings/Hyprland-Dots](https://github.com/LinuxBeginnings/Hyprland-Dots), the maintained continuation of JaKooLit's Hyprland dotfiles. The CarsonOS configuration is tailored to the project's wallpaper, emerald/ice-blue palette, bottom Waybar, and live-image workflow.
+
 ## Development roadmap
 
 - [x] Add an initial archiso profile for BIOS and UEFI boot.
-- [x] Set Cinnamon as the default desktop and configure the CarsonOS wallpaper.
+- [x] Set Hyprland as the default desktop and configure the CarsonOS wallpaper.
 - [x] Add original CarsonOS vector wallpaper and terminal helper commands.
 - [x] Add NetworkManager tray controls and PipeWire audio packages.
 - [x] Add a desktop and menu launcher for the `archinstall` guided installer.
 - [x] Add the `easy-archinstall` command and an **Easy Archinstall** desktop shortcut.
 - [x] Build the ISO successfully in GitHub Actions.
 - [x] Boot the live desktop in VirtualBox and verify the CarsonOS wallpaper.
-- [x] Add an optional Hyprland setup script and a CarsonOS-themed Waybar pinned to the bottom.
+- [x] Add a CarsonOS Hyprland desktop with a bottom Waybar, notification center, clipboard history, idle locking, and themed lock screen.
+- [x] Keep Cinnamon available as a selectable fallback.
+- [ ] Validate the Hyprland live session and Archinstall preset in a fresh ISO and disposable VM.
 - [x] Test booting in both BIOS and UEFI modes.
 - [x] Verify live networking, `pacman`, and official-repository package installation.
 - [x] Verify AUR helper operation and AUR package installation with `yay` / `paru`.
