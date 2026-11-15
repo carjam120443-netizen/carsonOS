@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+# Native CarsonOS power menu; uses Wofi already shipped with Hyprland.
+choice="$(
+  printf '%s\n' \
+    "Lock screen" \
+    "Log out" \
+    "Suspend" \
+    "Reboot" \
+    "Power off" |
+    wofi --dmenu --prompt "CarsonOS • Power" --width 260 --height 300
+)" || exit 0
+
+case "$choice" in
+  "Lock screen") exec hyprlock ;;
+  "Log out") exec hyprctl dispatch exit ;;
+  "Suspend") exec systemctl suspend ;;
+  "Reboot") exec systemctl reboot ;;
+  "Power off") exec systemctl poweroff ;;
+  *) exit 0 ;;
+esac
