@@ -82,7 +82,10 @@ apply_to_home() {
     "$home/.config/wofi" "$home/.config/kitty" "$home/.config/swaync"
 }
 
-# Install the native CarsonOS power menu.\ninstall -m 0755 "$POWER_MENU" /usr/local/bin/carsonos-power-menu\n\n# Install the system-wide wallpaper once.
+# Install the native CarsonOS power menu.
+install -m 0755 "$POWER_MENU" /usr/local/bin/carsonos-power-menu
+
+# Install the system-wide wallpaper once.
 WALLPAPER_DESTINATION="/usr/share/backgrounds/carsonos"
 install -d -m 0755 "$WALLPAPER_DESTINATION"
 for wallpaper in default.svg default.png; do
