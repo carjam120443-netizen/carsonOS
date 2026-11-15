@@ -73,8 +73,8 @@ cat > /etc/lightdm/lightdm.conf.d/50-carsonos.conf <<'EOF'
 greeter-session=lightdm-gtk-greeter
 autologin-user=liveuser
 autologin-user-timeout=0
-autologin-session=cinnamon
-user-session=cinnamon
+autologin-session=hyprland
+user-session=hyprland
 EOF
 
 # Keep the live user's shell helpful without overwriting the distro defaults.
@@ -102,8 +102,8 @@ CarsonOS quick help
   fastfetch         Show system information with the CarsonOS ASCII logo
   yay               Search and install packages from official repos and the AUR
   paru              Alternative AUR helper with pacman-style commands
-  carsonos-hyprland Install the optional Hyprland desktop
-  carsonos-cinnamon Install the optional Cinnamon desktop
+  carsonos-hyprland Restore the CarsonOS Hyprland configuration
+  carsonos-cinnamon Switch to the optional Cinnamon fallback
   carson-help       Show this help
   update-system     Update packages with pacman
   carsonos-installer Start the guided Arch installation assistant
@@ -176,7 +176,7 @@ StartupNotify=true
 EOF
 install -m 0644 /usr/share/applications/carsonos-installer.desktop /etc/skel/Desktop/Install\ CarsonOS.desktop
 install -m 0644 /usr/share/applications/carsonos-installer.desktop /home/liveuser/Desktop/Install\ CarsonOS.desktop
-install -m 0644 /usr/share/applications/carsonos-hyprland.desktop /home/liveuser/Desktop/Install\ Hyprland.desktop
+install -m 0644 /usr/share/applications/carsonos-hyprland.desktop /home/liveuser/Desktop/Hyprland Setup.desktop
 install -m 0644 /usr/share/applications/carsonos-cinnamon.desktop /home/liveuser/Desktop/Install\ Cinnamon.desktop
 chmod 0755 /usr/local/bin/carsonos-hyprland /usr/local/bin/carsonos-cinnamon
 chown -R liveuser:liveuser /home/liveuser/Desktop
@@ -204,6 +204,7 @@ cp -a /etc/skel/.config/hypr /home/liveuser/.config/
 cp -a /etc/skel/.config/waybar /home/liveuser/.config/
 cp -a /etc/skel/.config/kitty /home/liveuser/.config/
 cp -a /etc/skel/.config/wofi /home/liveuser/.config/
+cp -a /etc/skel/.config/swaync /home/liveuser/.config/
 # Reapply the ISO's XFCE channel settings explicitly, including the pinned panel.
 install -d -m 0755 /home/liveuser/.config/xfce4/xfconf/xfce-perchannel-xml
 cp -af /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/*.xml /home/liveuser/.config/xfce4/xfconf/xfce-perchannel-xml/
