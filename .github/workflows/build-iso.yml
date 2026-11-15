@@ -7,11 +7,13 @@ on:
     paths:
       - "profile/**"
       - "scripts/build-iso.sh"
+      - "scripts/install-hyprland-config.sh"
       - ".github/workflows/build-iso.yml"
   pull_request:
     paths:
       - "profile/**"
       - "scripts/build-iso.sh"
+      - "scripts/install-hyprland-config.sh"
       - ".github/workflows/build-iso.yml"
 
 # Only spend runner time on the newest ISO build for this branch.
