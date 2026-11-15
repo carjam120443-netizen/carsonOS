@@ -53,7 +53,7 @@ cliphist
 xdg-desktop-portal
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk
-polkit-kde-agent
+hyprpolkitagent
 qt5-wayland
 qt6-wayland
 grim
