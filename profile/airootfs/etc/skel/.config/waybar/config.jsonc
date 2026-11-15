@@ -83,6 +83,6 @@
     "format": "⏻",
     "tooltip": true,
     "tooltip-format": "Session and power options",
-    "on-click": "wlogout"
+    "on-click": "carsonos-power-menu"
   }
 }
