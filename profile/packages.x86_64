@@ -40,7 +40,32 @@ vulkan-intel
 xf86-video-amdgpu
 xf86-video-intel
 
-# Default desktop: Cinnamon
+# Default desktop: Hyprland (Wayland)
+hyprland
+waybar
+wofi
+kitty
+hyprpaper
+hypridle
+hyprlock
+swaync
+cliphist
+xdg-desktop-portal
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+polkit-kde-agent
+qt5-wayland
+qt6-wayland
+grim
+slurp
+wl-clipboard
+brightnessctl
+playerctl
+wlogout
+nwg-look
+ttf-jetbrains-mono-nerd
+
+# Optional fallback desktop: Cinnamon
 cinnamon
 cinnamon-translations
 nemo
