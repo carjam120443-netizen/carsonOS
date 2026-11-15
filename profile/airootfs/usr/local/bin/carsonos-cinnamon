@@ -1,4 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
-echo "Cinnamon is the default CarsonOS desktop and is included in this image."
-echo "Log out and choose Cinnamon from the LightDM session menu if needed."
+
+if [[ ${EUID} -ne 0 ]]; then
+  if command -v sudo >/dev/null 2>&1; then
+    exec sudo -- /usr/local/bin/carsonos-cinnamon "$@"
+  fi
+  echo "Run this helper as root (or install sudo first)." >&2
+  exit 1
+fi
+
+LIGHTDM_CONF=/etc/lightdm/lightdm.conf.d/50-carsonos.conf
+if [[ -f "$LIGHTDM_CONF" ]]; then
+  sed -i \
+    -e '/^[[:space:]]*autologin-user=/d' \
+    -e '/^[[:space:]]*autologin-user-timeout=/d' \
+    -e '/^[[:space:]]*autologin-session=/d' \
+    "$LIGHTDM_CONF"
+fi
+
+echo
+echo "Cinnamon is available as the CarsonOS fallback desktop."
+echo "1. Log out of the current session."
+echo "2. Open the LightDM session menu."
+echo "3. Choose Cinnamon, then log in."
