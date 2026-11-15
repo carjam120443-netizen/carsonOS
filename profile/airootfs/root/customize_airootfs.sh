@@ -45,6 +45,12 @@ chmod 0755 /usr/local/bin/enable-chaotic-aur
 if ! id liveuser >/dev/null 2>&1; then
   useradd --create-home --shell /bin/bash --groups wheel,audio,video,storage,optical,power liveuser
 fi
+# LightDM requires automatic-login users to belong to the autologin group.
+if ! getent group autologin >/dev/null 2>&1; then
+  groupadd --system autologin
+fi
+usermod --append --groups autologin liveuser
+
 # Requested default password for the live account (autologin remains enabled).
 printf '%s\n' 'liveuser:live' | chpasswd
 
