@@ -15,6 +15,7 @@ git
 nano
 vim
 bash-completion
+dash
 less
 man-db
 man-pages
@@ -78,9 +79,11 @@ pavucontrol
 mousepad
 ristretto
 xfce4-screenshooter
+activity-log-manager
 
 # Useful editor and basic tools
 nano
+acorn
 
 # Browser, fonts, and audio
 firefox
