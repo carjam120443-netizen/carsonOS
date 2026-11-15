@@ -83,6 +83,9 @@ The script writes generated ISO files to `out/` and uses `/tmp/carsonos-archiso-
 - `adb-wifi-scanner` — scans for Android devices available through ADB wireless debugging; its command is `adbw`.
 - `adbcontrol` — Java-based ADB remote-control utility for viewing and interacting with a connected Android device.
 - `android-tools` — provides `adb` and `fastboot`, the platform tools used by the Android utilities.
+- `acorn` — JavaScript parser package from the official Arch repositories.
+- `activity-log-manager` — graphical utility for viewing and managing activity log settings.
+- `dash` — lightweight POSIX-compliant command shell.
 - `carson-help` — quick reference for common commands.
 - `carsonos-hyprland` — installs Hyprland and supporting Wayland tools on demand, renders the default CarsonOS wallpaper for Hyprpaper, applies the bundled Hyprland/Waybar/Wofi/Kitty theme, and disables live-session autologin so LightDM's session selector is available.
 - Cinnamon — the default desktop environment, with the original CarsonOS wallpaper.
