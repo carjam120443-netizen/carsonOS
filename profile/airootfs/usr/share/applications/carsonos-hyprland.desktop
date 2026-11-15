@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Name=Install Hyprland (Optional)
-Comment=Install the optional Hyprland Wayland desktop
+Name=Restore Hyprland Configuration
+Comment=Restore CarsonOS Hyprland settings and enable the LightDM session chooser
 Exec=xfce4-terminal --hold --title=CarsonOS-Hyprland --command=carsonos-hyprland
 Icon=preferences-desktop-display
 Terminal=false
