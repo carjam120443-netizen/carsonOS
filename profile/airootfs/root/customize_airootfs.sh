@@ -237,6 +237,8 @@ CALAMARES_PACKAGE="/root/calamares.pkg.tar.zst"
 CALAMARES_DEPS="/root/calamares-runtime-deps.txt"
 BRAVE_ORIGIN_PACKAGE="/root/brave-origin-bin.pkg.tar.zst"
 BRAVE_ORIGIN_DEPS="/root/brave-origin-runtime-deps.txt"
+BASHFUL_PACKAGE="/root/bashful.pkg.tar.zst"
+BASHFUL_DEPS="/root/bashful-runtime-deps.txt"
 CFAN_PACKAGE="/root/cfan-git.pkg.tar.zst"
 CFAN_DEPS="/root/cfan-git-runtime-deps.txt"
 ADB_GRIPPER_PACKAGE="/root/adb-gripper.pkg.tar.zst"
@@ -246,7 +248,7 @@ ADB_WIFI_SCANNER_DEPS="/root/adb-wifi-scanner-runtime-deps.txt"
 ADBCONTROL_PACKAGE="/root/adbcontrol.pkg.tar.zst"
 ADBCONTROL_DEPS="/root/adbcontrol-runtime-deps.txt"
 
-for staged_file in "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$ADB_GRIPPER_PACKAGE" "$ADB_GRIPPER_DEPS" "$ADB_WIFI_SCANNER_PACKAGE" "$ADB_WIFI_SCANNER_DEPS" "$ADBCONTROL_PACKAGE" "$ADBCONTROL_DEPS"; do
+for staged_file in "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE" "$CALAMARES_DEPS" "$BRAVE_ORIGIN_PACKAGE" "$BRAVE_ORIGIN_DEPS" "$BASHFUL_PACKAGE" "$BASHFUL_DEPS" "$ADB_GRIPPER_PACKAGE" "$ADB_GRIPPER_DEPS" "$ADB_WIFI_SCANNER_PACKAGE" "$ADB_WIFI_SCANNER_DEPS" "$ADBCONTROL_PACKAGE" "$ADBCONTROL_DEPS"; do
   if [[ ! -f "$staged_file" ]]; then
     echo "Missing staged build file: $staged_file. Build the ISO with scripts/build-iso.sh." >&2
     exit 1
@@ -288,7 +290,7 @@ fi
 # the CPU exposed by a virtualized ISO builder. Install it only when staging succeeded.
 AUR_PACKAGES=(
   "$YAY_PACKAGE" "$PARU_PACKAGE" "$CALAMARES_PACKAGE"
-  "$BRAVE_ORIGIN_PACKAGE"
+  "$BRAVE_ORIGIN_PACKAGE" "$BASHFUL_PACKAGE"
   "$ADB_GRIPPER_PACKAGE" "$ADB_WIFI_SCANNER_PACKAGE" "$ADBCONTROL_PACKAGE"
 )
 if [[ -f "$CFAN_PACKAGE" && -f "$CFAN_DEPS" ]]; then
