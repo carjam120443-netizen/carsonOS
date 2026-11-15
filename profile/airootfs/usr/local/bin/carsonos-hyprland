@@ -38,7 +38,6 @@ pacman -Syu --needed --noconfirm \
   wl-clipboard \
   brightnessctl \
   playerctl \
-  wlogout \
   ttf-jetbrains-mono-nerd
 
 # The SVG is CarsonOS's canonical wallpaper. Render a raster copy for Hyprpaper.
