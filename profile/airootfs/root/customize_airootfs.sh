@@ -66,6 +66,12 @@ SUPPORT_URL="https://github.com/carjam120443-netizen/carsonOS/issues"
 BUG_REPORT_URL="https://github.com/carjam120443-netizen/carsonOS/issues"
 EOF
 printf '%s\n' 'carsonos-live' > /etc/hostname
+# Render the CarsonOS SVG wallpaper for Hyprpaper and Hyprlock before LightDM starts.
+install -d -m 0755 /usr/share/backgrounds/carsonos
+if command -v rsvg-convert >/dev/null 2>&1 && [[ -r /usr/share/backgrounds/carsonos/default.svg ]]; then
+  rsvg-convert --width 1920 --height 1080 --output /usr/share/backgrounds/carsonos/default.png /usr/share/backgrounds/carsonos/default.svg
+fi
+
 
 install -d -m 0755 /etc/lightdm/lightdm.conf.d
 cat > /etc/lightdm/lightdm.conf.d/50-carsonos.conf <<'EOF'
