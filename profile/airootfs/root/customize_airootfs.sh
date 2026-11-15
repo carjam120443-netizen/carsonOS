@@ -209,7 +209,7 @@ cp -a /etc/skel/.config/swaync /home/liveuser/.config/
 install -d -m 0755 /home/liveuser/.config/xfce4/xfconf/xfce-perchannel-xml
 cp -af /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/*.xml /home/liveuser/.config/xfce4/xfconf/xfce-perchannel-xml/
 chown liveuser:liveuser /home/liveuser/.bashrc /home/liveuser/.bashrc.carsonos /home/liveuser/.config/mimeapps.list
-chown -R liveuser:liveuser /home/liveuser/.config/fastfetch /home/liveuser/.config/hypr /home/liveuser/.config/xfce4
+chown -R liveuser:liveuser /home/liveuser/.config/fastfetch /home/liveuser/.config/hypr /home/liveuser/.config/waybar /home/liveuser/.config/kitty /home/liveuser/.config/wofi /home/liveuser/.config/swaync /home/liveuser/.config/xfce4
 
 # NetworkManager starts for Ethernet and Wi-Fi; the applet exposes Wi-Fi controls.
 # PipeWire's user sockets provide audio and PulseAudio compatibility.
